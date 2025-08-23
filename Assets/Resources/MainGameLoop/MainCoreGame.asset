@@ -17,6 +17,7 @@ MonoBehaviour:
   hunger: 0
   fatigue: 0
   playerAsset:
-    assetName: 
+  - assetName: 
     assetCode: 0
     assetQuantity: 0
+    assetHistory: []
