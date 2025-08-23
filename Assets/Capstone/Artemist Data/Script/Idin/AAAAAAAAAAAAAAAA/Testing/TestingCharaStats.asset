@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cf471fc5aa31564bbdebddeea8867ee, type: 3}
+  m_Name: TestingCharaStats
+  m_EditorClassIdentifier: 
+  characterName: Erik
+  characterID: 1
+  baseMaxHP: 100
+  baseAttack: 6
+  baseDefense: 4
+  baseSpeed: 15
+  characterElement: 0
+  characterSpeciality: 0
+  baseMaxUltimateEnergy: 100
+  initialDeckCards:
+  - card: {fileID: 11400000, guid: 7e84d3135f7dfbc4bb0691cbbb6ac336, type: 2}
+    count: 40
+  - card: {fileID: 11400000, guid: 4d3e36f21a095d34c9303392f956f0f2, type: 2}
+    count: 20
+  - card: {fileID: 11400000, guid: 670fb0fc81bc4a2479cb31a6dbb5df1e, type: 2}
+    count: 20
+  - card: {fileID: 11400000, guid: 37de9e58dc737f44895d8b491baf6d80, type: 2}
+    count: 20

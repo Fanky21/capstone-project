@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 416105c3e52b69d458c905ff28c0b846, type: 3}
+  m_Name: PemanggilanKehampaan
+  m_EditorClassIdentifier: 
+  cardName: Void Calling
+  cardDescription: Memanggil portal void untuk menyerang musuh
+  cardArtwork: {fileID: 21300000, guid: 0f5f9842618743745931a4ec7a8e06ec, type: 3}
+  cardType: 1
+  targetType: 0
+  actionPointCost: 0
+  cardElement: 0
+  baseValue: 10
+  valueScaling: 0
+  skillPointChange: -2
+  playSoundFX: {fileID: 0}
+  playVFX: {fileID: 0}
+  comboCode: 
