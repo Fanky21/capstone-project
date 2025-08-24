@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class ObjectInteraction : MonoBehaviour
+public class BuildingTransition : MonoBehaviour
 {
-    public GameObject interactionUI;
+    public GameObject indicatorUi;
     private bool playerInRange = false;
 
     private void Update()
@@ -11,15 +11,11 @@ public class ObjectInteraction : MonoBehaviour
         {
             if (gameObject.name == "PcRumah")
             {
-                // Spawn the specific UI for this object
+        
             }
             else if (gameObject.name == "Kursi")
             {
-                // Spawn the specific UI for this object
-            }
-            else if (gameObject.name == "VendingMachine")
-            {
-                Debug.Log("Vending Machine Interacted");
+    
             }
         }
     }
@@ -28,9 +24,9 @@ public class ObjectInteraction : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            interactionUI.SetActive(true);
+            indicatorUi.SetActive(true);
             playerInRange = true;
-            Debug.Log("Player Detected on object :" + gameObject.name);
+            Debug.Log("Player Detected on :" + gameObject.name);
         }
     }
 
@@ -38,10 +34,9 @@ public class ObjectInteraction : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            interactionUI.SetActive(false);
+            indicatorUi.SetActive(false);
             playerInRange = false;
+            // Despawn any spawned UI if needed
         }
-        
-        // despawn jika ada yang di spawn diatas
     }
 }
