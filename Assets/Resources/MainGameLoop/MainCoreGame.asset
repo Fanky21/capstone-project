@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51b862237b614a244bfbc201519f00cb, type: 3}
   m_Name: MainCoreGame
   m_EditorClassIdentifier: 
-  hari: 0
   uang: 0
   hunger: 0
   fatigue: 0
