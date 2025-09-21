@@ -1098,7 +1098,7 @@ GameObject:
   - component: {fileID: 611581869}
   - component: {fileID: 611581870}
   m_Layer: 0
-  m_Name: SceneToArea
+  m_Name: SceneToJalan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3292,7 +3292,7 @@ GameObject:
   - component: {fileID: 1619207422}
   - component: {fileID: 1619207423}
   m_Layer: 0
-  m_Name: SceneToArea (1)
+  m_Name: SceneToFurniture
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3501,7 +3501,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eaa659782e8a4b40ab52ba29371aad0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneTargetName: Luar_furniture
+  sceneTargetName: Furniture
 --- !u!61 &1675114413
 BoxCollider2D:
   m_ObjectHideFlags: 0

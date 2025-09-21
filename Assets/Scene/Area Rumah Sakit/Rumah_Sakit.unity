@@ -952,7 +952,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eaa659782e8a4b40ab52ba29371aad0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneTargetName: Luar_RS
+  sceneTargetName: Area_RS
 --- !u!61 &633617898
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1180,7 +1180,7 @@ Transform:
   m_GameObject: {fileID: 740879690}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.1452026, y: 0.67744005, z: -10}
+  m_LocalPosition: {x: 3.1381664, y: 0.67750007, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
