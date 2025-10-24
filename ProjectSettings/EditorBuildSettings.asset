@@ -9,43 +9,43 @@ EditorBuildSettings:
     path: Assets/Scene/Main Menu/MainMenu.unity
     guid: c4581dde28f40f34087dd17ee1100f6c
   - enabled: 1
-    path: Assets/Scene/Area Rumah/Rumah.unity
+    path: Assets/Scene/Rumah/Rumah.unity
     guid: 60bad7f179f02b045a34ee4c153b0c8f
   - enabled: 1
-    path: Assets/Scene/Area Rumah/Luar_rumah.unity
+    path: Assets/Scene/Rumah/Luar_rumah.unity
     guid: 735ee8763c3e7554ab1397bb1b02dba9
   - enabled: 1
-    path: Assets/Scene/Area Minimarket/Luar_Minimarket.unity
+    path: Assets/Scene/Minimarket/Luar_Minimarket.unity
     guid: 180207121dbc1d5478f06a3af62f0bf9
   - enabled: 1
-    path: Assets/Scene/Area Minimarket/Minimarket.unity
+    path: Assets/Scene/Minimarket/Minimarket.unity
     guid: c9440bdd2f7815d458fa05f4ea571d0a
   - enabled: 1
-    path: Assets/Scene/Area Toko Furniture/Luar_furniture.unity
+    path: Assets/Scene/Taman/Luar_furniture.unity
     guid: cda12b493c23c8a4f86230b82f77c6d7
   - enabled: 1
-    path: Assets/Scene/Area Toko Furniture/Area_Furniture.unity
+    path: Assets/Scene/Toko Furniture/Area_Furniture.unity
     guid: 682747cc7a31cdf4f8f7beaff5b24052
   - enabled: 1
-    path: Assets/Scene/Area Toko Furniture/Furniture.unity
+    path: Assets/Scene/Toko Furniture/Furniture.unity
     guid: ded284feb9140ed40837dae31d4eb95c
   - enabled: 1
-    path: Assets/Scene/Area Taman/Luar_Taman.unity
+    path: Assets/Scene/Taman/Luar_Taman.unity
     guid: e2ce80b8dee945048ba6ee29f3ea7a4e
   - enabled: 1
     path: Assets/Scene/Area Rumah Sakit/Luar_RS.unity
     guid: f5b9f54014ecbd3439cdd33b3b9ae92b
   - enabled: 1
-    path: Assets/Scene/Area Bank/Area_Bank.unity
+    path: Assets/Scene/Bank/Area_Bank.unity
     guid: 300a2aefe99005b48bff22a473cbc267
   - enabled: 1
-    path: Assets/Scene/Area Bank/Bank.unity
+    path: Assets/Scene/Bank/Bank.unity
     guid: 9fbefc1561a9aeb45a93663286f87658
   - enabled: 1
-    path: Assets/Scene/Area Rumah Sakit/Area_RS.unity
+    path: Assets/Scene/Rumah Sakit/Area_RS.unity
     guid: c2ed9131df5659847b9ffedee792ed2b
   - enabled: 1
-    path: Assets/Scene/Area Rumah Sakit/Rumah_Sakit.unity
+    path: Assets/Scene/Rumah Sakit/Rumah_Sakit.unity
     guid: ae279aec3cc5c6042b6c9cad79ff5bda
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
