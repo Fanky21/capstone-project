@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 3863d3677eab5632ea7205596bffa18b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 174613
+  packageName: Auto Importer for Aseprite LITE
+  packageVersion: 1.2.2
+  assetPath: Assets/AutoImporterForAsepriteLite/Scripts/Editor/Config.cs
+  uploadId: 431700

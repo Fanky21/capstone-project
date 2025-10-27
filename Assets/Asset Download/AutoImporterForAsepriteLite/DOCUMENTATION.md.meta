@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: df3787aa4ac541e789c48dabf3ddcaf5
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 174613
+  packageName: Auto Importer for Aseprite LITE
+  packageVersion: 1.2.2
+  assetPath: Assets/AutoImporterForAsepriteLite/DOCUMENTATION.md
+  uploadId: 431700
