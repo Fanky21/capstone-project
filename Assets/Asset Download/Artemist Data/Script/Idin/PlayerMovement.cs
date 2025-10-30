@@ -9,14 +9,33 @@ public class PlayerMovement : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private bool isWalking = false;
     private Vector2 movementInput;
-
     private bool canMove = true;
-
-    // audioManager // audioManager;
 
     private void Awake()
     {
-        // // audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<// audioManager>();
+        // --- LOGIKA SPAWN TERINTEGRASI DIMULAI DI SINI ---
+        // Jalankan hanya jika SceneController tersedia dan TargetSpawnId valid
+        if (SceneController.instance != null && !string.IsNullOrEmpty(SceneController.instance.TargetSpawnId))
+        {
+            SpawnPoint[] spawnPoints = FindObjectsByType<SpawnPoint>(FindObjectsSortMode.None);
+
+            foreach (SpawnPoint point in spawnPoints)
+            {
+                if (point.spawnId == SceneController.instance.TargetSpawnId)
+                {
+                    // Atur posisi transform (karena kita pakai Rigidbody2D)
+                    transform.position = point.transform.position;
+                    transform.rotation = point.transform.rotation;
+
+                    Debug.Log($"<color=green>Player position set by PlayerMovement.cs to spawn point '{point.spawnId}'</color>");
+
+                    // Hapus ID agar tidak digunakan ulang saat reload scene
+                    SceneController.instance.ClearTargetSpawnId();
+                    break;
+                }
+            }
+        }
+        // --- AKHIR LOGIKA SPAWN ---
     }
 
     void Start()
@@ -28,10 +47,10 @@ public class PlayerMovement : MonoBehaviour
         rb.linearDamping = 0f;
         rb.angularDamping = 0f;
         rb.gravityScale = 0f;
-
-        // Optimalisasi Rigidbody
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-        // rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+
+        // Player sudah diposisikan pada titik spawn di Awake()
+        Debug.Log("PlayerMovement initialized at: " + transform.position);
     }
 
     void Update()
@@ -45,7 +64,6 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        // Ambil input di Update (real-time)
         float horizontal = 0;
         float vertical = 0;
 
@@ -56,12 +74,10 @@ public class PlayerMovement : MonoBehaviour
 
         movementInput = new Vector2(horizontal, vertical).normalized;
 
-        // Cek animasi jalan/idle
         isWalking = (movementInput != Vector2.zero);
 
         if (isWalking)
         {
-            // audioManager.PlaySFX(// audioManager.walkingOnFloor);
             animator.ResetTrigger("isIdle");
             animator.SetTrigger("isWalking");
         }
@@ -71,7 +87,6 @@ public class PlayerMovement : MonoBehaviour
             animator.SetTrigger("isIdle");
         }
 
-        // Flip sprite
         if (horizontal < 0)
             spriteRenderer.flipX = true;
         else if (horizontal > 0)
@@ -88,7 +103,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (isWalking)
         {
-            rb.linearVelocity = movementInput * speed;  
+            rb.linearVelocity = movementInput * speed;
         }
         else
         {

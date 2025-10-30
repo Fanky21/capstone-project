@@ -3,9 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class MoveBetweenMap : MonoBehaviour
 {
-    // Target Map
     public string sceneTargetName;
-
     private float stayTime = 0f;
     private bool playerInside = false;
     private Rigidbody2D playerRigidbody;
@@ -13,13 +11,11 @@ public class MoveBetweenMap : MonoBehaviour
 
     void MoveScene()
     {
-        // Simpan nama scene asal
         if (SceneTransitionManager.Instance != null)
         {
             SceneTransitionManager.Instance.SetSceneAsal(SceneManager.GetActiveScene().name);
         }
 
-        // Pindah scene
         SceneManager.LoadScene(sceneTargetName);
     }
 
