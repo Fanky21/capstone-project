@@ -6,11 +6,7 @@ public class Pause : MonoBehaviour
     [Header("Main Panels")]
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject resumeButton;
-
-    [Header("Sub Panels")]
-    [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject bantuanPanel;
-    [SerializeField] private GameObject controlPanel;
 
     private bool isPaused = false;
 
@@ -18,7 +14,7 @@ public class Pause : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (settingsPanel.activeSelf || bantuanPanel.activeSelf || controlPanel.activeSelf)
+            if (bantuanPanel.activeSelf)
             {
                 BackToPause();
             }
@@ -50,10 +46,7 @@ public class Pause : MonoBehaviour
 
         pausePanel.SetActive(true);
         resumeButton.SetActive(true);
-
-        settingsPanel.SetActive(false);
         bantuanPanel.SetActive(false);
-        controlPanel.SetActive(false);
     }
 
     public void ResumeGame()
@@ -63,40 +56,20 @@ public class Pause : MonoBehaviour
         Time.timeScale = 1f;
 
         pausePanel.SetActive(false);
-        settingsPanel.SetActive(false);
         bantuanPanel.SetActive(false);
-        controlPanel.SetActive(false);
-    }
-
-    public void OpenSettings()
-    {
-        PlayButtonSound();
-        pausePanel.SetActive(false);
-        settingsPanel.SetActive(true);
     }
 
     public void OpenBantuan()
     {
         PlayButtonSound();
-        settingsPanel.SetActive(false);
-        controlPanel.SetActive(false);
         pausePanel.SetActive(false);
         bantuanPanel.SetActive(true);
-    }
-
-    public void OpenControl()
-    {
-        PlayButtonSound();
-        settingsPanel.SetActive(false);
-        controlPanel.SetActive(true);
     }
 
     public void BackToPause()
     {
         PlayButtonSound();
-        settingsPanel.SetActive(false);
         bantuanPanel.SetActive(false);
-        controlPanel.SetActive(false);
         pausePanel.SetActive(true);
     }
 
