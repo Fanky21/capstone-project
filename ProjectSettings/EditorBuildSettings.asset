@@ -21,9 +21,6 @@ EditorBuildSettings:
     path: Assets/Scene/Minimarket/Minimarket.unity
     guid: c9440bdd2f7815d458fa05f4ea571d0a
   - enabled: 1
-    path: Assets/Scene/Taman/Luar_furniture.unity
-    guid: cda12b493c23c8a4f86230b82f77c6d7
-  - enabled: 1
     path: Assets/Scene/Toko Furniture/Area_Furniture.unity
     guid: 682747cc7a31cdf4f8f7beaff5b24052
   - enabled: 1
@@ -32,9 +29,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scene/Taman/Luar_Taman.unity
     guid: e2ce80b8dee945048ba6ee29f3ea7a4e
-  - enabled: 1
-    path: Assets/Scene/Area Rumah Sakit/Luar_RS.unity
-    guid: f5b9f54014ecbd3439cdd33b3b9ae92b
   - enabled: 1
     path: Assets/Scene/Bank/Area_Bank.unity
     guid: 300a2aefe99005b48bff22a473cbc267

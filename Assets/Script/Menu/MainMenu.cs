@@ -8,7 +8,6 @@ public class MainMenu : MonoBehaviour
     [Header("UI Panels")]
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject settingsPanel;
-    [SerializeField] private GameObject audioPanel;
     [SerializeField] private GameObject kontrolPanel;
     [SerializeField] private GameObject keluarPanel;
 
@@ -31,7 +30,6 @@ public class MainMenu : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     private void Update()
@@ -87,7 +85,6 @@ public class MainMenu : MonoBehaviour
     {
         isSettingsOpen = true;
         settingsPanel?.SetActive(true);
-        audioPanel?.SetActive(true);
 
         isMainMenuPanel = false;
         mainMenuPanel?.SetActive(false);
@@ -132,7 +129,6 @@ public class MainMenu : MonoBehaviour
     {
         isSettingsOpen = false;
         settingsPanel?.SetActive(false);
-        audioPanel?.SetActive(false);
 
         isMainMenuPanel = true;
         mainMenuPanel?.SetActive(true);
