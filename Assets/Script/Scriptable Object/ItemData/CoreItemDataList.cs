@@ -5,6 +5,7 @@ public class CoreItemDataList
 {
     public int itemId;
     public string itemName;
+    public int itemHarga;
     public Sprite itemImage;
     [TextArea(20, 10)]
     public string itemDescription;

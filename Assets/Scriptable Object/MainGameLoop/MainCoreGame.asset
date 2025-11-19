@@ -19,4 +19,6 @@ MonoBehaviour:
   - assetName: 
     assetCode: 0
     assetQuantity: 0
-    assetHistory: []
+    assetHistory:
+    - dateTimeString: 
+      price: 0

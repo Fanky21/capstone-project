@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d288e46766722ac46a3f63032e4cdbe5, type: 3}
   m_Name: DepositoCoreObject
   m_EditorClassIdentifier: 
-  depositoCoreObjectHistory: []
+  depositoCoreObjectHistory:
+  - depositoCode: 0
+    depositoAmmount: 0
+    depositoDuration: 0

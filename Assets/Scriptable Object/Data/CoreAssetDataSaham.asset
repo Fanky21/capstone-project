@@ -12,4 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a0b71bd4ddb3b9429d223432e34051d, type: 3}
   m_Name: CoreAssetDataSaham
   m_EditorClassIdentifier: 
-  coreAssetDataDetails: []
+  coreAssetDataDetails:
+  - assetName: 
+    assetCode: 0
+    assetCodeName: 
+    assetIcon: {fileID: 0}

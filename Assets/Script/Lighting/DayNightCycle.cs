@@ -4,64 +4,75 @@ using UnityEngine.Rendering.Universal;
 
 public class DayNightCycle : MonoBehaviour
 {
+    public static DayNightCycle Instance;
+
+    [Header("Time Settings")]
+    public float fullDayDuration = 120f; // detik real untuk 24 jam dunia
+    public float WorldTime { get; private set; } // menit 0–1440
+
     [Header("Lighting")]
     public Light2D sunlight;
     public Transform spotlightGroup;
 
-    [Header("Time Settings")]
-    [Tooltip("Berapa detik dunia nyata untuk 1 hari penuh (24 jam dunia).")]
-    public float fullDayDuration = 120f; // 2 menit = 1 hari penuh
-
-    [Tooltip("Durasi transisi saat fajar/senja (detik dunia nyata).")]
+    [Header("Transition")]
     public float transitionDuration = 3f;
 
-    [Header("UI")]
-    public TextMeshProUGUI jamDunia;
-
-    private float worldTime; 
     private bool isDay = true;
     private bool isTransitioning = false;
     private float transitionTime;
-
     private float startIntensity, targetIntensity;
     private Color startColor, targetColor;
 
+    private void Awake()
+    {
+        Instance = this;
+
+        // Load waktu dari PlayerPrefs
+        WorldTime = PlayerPrefs.GetFloat("WorldTime", 360f);
+    }
     void Start()
     {
-        if (PlayerPrefs.HasKey("WorldTime"))
-            worldTime = PlayerPrefs.GetFloat("WorldTime", 360f);
+        if (Instance == null) return;
 
-        UpdateLightingInstant();
-        UpdateSpotlight();
-        UpdateJamUI();
-    }
-
-    void Update()
-    {
-        // jalankan waktu dunia
-        worldTime += Time.deltaTime * (1440f / fullDayDuration);
-
-        if (worldTime >= 1440f) worldTime -= 1440f; // reset ke 0 (00:00)
-
-        UpdateJamUI();
-
-        // deteksi jam untuk transisi
+        // Sync time
+        float worldTime = WorldTime;
         int hour = Mathf.FloorToInt(worldTime / 60f);
 
+        // Determine correct state
+        if (hour >= 6 && hour < 18)
+            isDay = true;
+        else
+            isDay = false;
+
+        // Apply lighting
+        UpdateLightingInstant();
+        UpdateSpotlight();
+    }
+
+    private void Update()
+    {
+        // update waktu dunia
+        WorldTime += Time.deltaTime * (1440f / fullDayDuration);
+        if (WorldTime >= 1440f) WorldTime -= 1440f;
+
+        int hour = Mathf.FloorToInt(WorldTime / 60f);
+
+        // kontrol sunrise / sunset
         if (!isTransitioning)
         {
             if (hour == 6 && !isDay)
             {
                 isDay = true;
-                StartTransition(true);  // sunrise
+                StartTransition(true);
             }
             else if (hour == 18 && isDay)
             {
                 isDay = false;
-                StartTransition(false); // sunset
+                StartTransition(false);
             }
         }
 
+        // transisi lighting
         if (isTransitioning)
         {
             transitionTime += Time.deltaTime;
@@ -115,26 +126,16 @@ public class DayNightCycle : MonoBehaviour
 
     private void UpdateSpotlight()
     {
-        if (spotlightGroup != null)
-        {
-            var lights = spotlightGroup.GetComponentsInChildren<Light2D>(true);
-            foreach (var light in lights)
-                light.enabled = !isDay;
-        }
-    }
+        if (spotlightGroup == null) return;
 
-    private void UpdateJamUI()
-    {
-        if (jamDunia == null) return;
-
-        int hours = Mathf.FloorToInt(worldTime / 60f);
-        int minutes = Mathf.FloorToInt(worldTime % 60f);
-        jamDunia.text = $"{hours:00} : {minutes:00}";
+        var lights = spotlightGroup.GetComponentsInChildren<Light2D>(true);
+        foreach (var l in lights)
+            l.enabled = !isDay;
     }
 
     private void OnDisable()
     {
-        PlayerPrefs.SetFloat("WorldTime", worldTime);
+        PlayerPrefs.SetFloat("WorldTime", WorldTime);
         PlayerPrefs.Save();
     }
 }
