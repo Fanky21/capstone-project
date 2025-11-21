@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class FurniturePanel : MonoBehaviour
+public class ObatPanel : MonoBehaviour
 {
     [Header("UI Panel")]
-    [SerializeField] private GameObject panelFurniture;   
+    [SerializeField] private GameObject panelObat;   
     [SerializeField] private GameObject interactButton;  
     [Header("Button Invest")]
     [SerializeField] private GameObject investButton;
@@ -17,8 +17,8 @@ public class FurniturePanel : MonoBehaviour
         if (interactButton != null)
             interactButton.SetActive(false);
 
-        if (panelFurniture != null)
-            panelFurniture.SetActive(false);
+        if (panelObat != null)
+            panelObat.SetActive(false);
     }
 
     private void Update()
@@ -40,7 +40,7 @@ public class FurniturePanel : MonoBehaviour
     public void OpenFurniturePanel()
     {
         panelOpen = true;
-        panelFurniture.SetActive(true);
+        panelObat.SetActive(true);
         investButton.SetActive(false);
         pauseButton.SetActive(false);
         Time.timeScale = 0f;
@@ -52,7 +52,7 @@ public class FurniturePanel : MonoBehaviour
     public void CloseFurniturePanel()
     {
         panelOpen = false;
-        panelFurniture.SetActive(false);
+        panelObat.SetActive(false);
         investButton.SetActive(true);
         pauseButton.SetActive(true);
         Time.timeScale = 1f;

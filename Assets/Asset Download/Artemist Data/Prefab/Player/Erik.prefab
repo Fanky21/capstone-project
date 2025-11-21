@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8056257613971065176}
   - component: {fileID: 3799516860166469540}
   - component: {fileID: 2523802810457724601}
+  - component: {fileID: 5722462556789479254}
   m_Layer: 0
   m_Name: Erik
   m_TagString: Player
@@ -191,3 +192,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 3
   variableJoystick: {fileID: 0}
+--- !u!114 &5722462556789479254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1845177456500050985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de1ddb86a29db12469359afddf2be22b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthSlider: {fileID: 0}
+  staminaSlider: {fileID: 0}
+  money: 0
+  moneyDisplay: {fileID: 0}
