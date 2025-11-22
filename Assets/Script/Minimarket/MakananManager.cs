@@ -17,7 +17,7 @@ public class MakananManager : MonoBehaviour
 {
     public TextMeshProUGUI kurangHarga;
     public List<MakananBeli> makananList;
-    public int playerMoney = 1000;
+    // Hapus playerMoney lokal, gunakan dari Player.cs
 
     void Start()
     {
@@ -30,10 +30,11 @@ public class MakananManager : MonoBehaviour
 
     public void BuyItem(MakananBeli makanan)
     {
-        if (playerMoney >= makanan.hargaMakanan)
+        // Gunakan uang dari Player.cs
+        if (Player.instance.uang >= makanan.hargaMakanan)
         {
-            playerMoney -= makanan.hargaMakanan;
-            kurangHarga.text = "Harga berkurang: " + makanan.hargaMakanan;
+            Player.instance.SubtractUang(makanan.hargaMakanan); // Kurangi uang via Player
+            kurangHarga.text = "" + makanan.hargaMakanan;
 
             Item newItem = new Item(
                 makanan.namaMakanan,
@@ -42,7 +43,7 @@ public class MakananManager : MonoBehaviour
                 makanan.staminaMakanan
             );
 
-            InventoryStore.instance.AddItem(newItem);
+            Inventory.instance.AddItem(newItem);
 
             Debug.Log("Berhasil membeli: " + makanan.namaMakanan);
         }
