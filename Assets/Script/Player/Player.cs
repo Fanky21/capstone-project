@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     [Header("Player Stats")]
     public float maxHealth = 100f;
     public float maxStamina = 100f;
-    public int uang = 1000; // Jumlah uang awal player (sekarang digunakan oleh MakananManager)
+    public int uang = 100000; 
 
     private float currentHealth;
     private float currentStamina;
@@ -27,50 +27,42 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        // Inisialisasi health dan stamina
-        currentHealth = maxHealth;
-        currentStamina = maxStamina;
+        LoadPlayerData();
 
-        // Setup slider
         healthSlider.maxValue = maxHealth;
         healthSlider.value = currentHealth;
 
         staminaSlider.maxValue = maxStamina;
         staminaSlider.value = currentStamina;
 
-        // Update UI uang
         UpdateUangUI();
 
-        // Mulai coroutine untuk mengurangi health dan stamina setiap 3 detik
         StartCoroutine(DecreaseStatsOverTime());
     }
 
-    // Coroutine untuk mengurangi health dan stamina setiap 3 detik
     private IEnumerator DecreaseStatsOverTime()
     {
         while (true)
         {
-            yield return new WaitForSeconds(3f); // Tunggu 3 detik
+            yield return new WaitForSeconds(5f); // Tunggu 3 detik
 
-            // Kurangi health sebanyak 1, tapi tidak kurang dari 0
             if (currentHealth > 0)
             {
                 currentHealth -= 1f;
                 healthSlider.value = currentHealth;
+                SavePlayerData(); // Simpan setiap perubahan
             }
 
-            // Kurangi stamina sebanyak 1, tapi tidak kurang dari 0
             if (currentStamina > 0)
             {
                 currentStamina -= 1f;
                 staminaSlider.value = currentStamina;
+                SavePlayerData(); // Simpan setiap perubahan
             }
 
-            // Jika health atau stamina habis, bisa tambahkan logika game over atau efek lain
             if (currentHealth <= 0)
             {
                 Debug.Log("Health habis! Game Over atau efek lain.");
-                // Misalnya: StopCoroutine atau panggil method game over
             }
 
             if (currentStamina <= 0)
@@ -80,11 +72,11 @@ public class Player : MonoBehaviour
         }
     }
 
-    // Method untuk menambah atau mengurangi uang
     public void AddUang(int amount)
     {
         uang += amount;
         UpdateUangUI();
+        SavePlayerData(); // Simpan setiap perubahan
     }
 
     public void SubtractUang(int amount)
@@ -92,27 +84,42 @@ public class Player : MonoBehaviour
         uang -= amount;
         if (uang < 0) uang = 0; // Pastikan tidak negatif
         UpdateUangUI();
+        SavePlayerData(); // Simpan setiap perubahan
     }
 
-    // Update UI untuk uang
     private void UpdateUangUI()
     {
         uangPlayer.text = uang.ToString();
     }
 
-    // Method untuk menambah health (misalnya, dari item)
     public void AddHealth(float amount)
     {
         currentHealth += amount;
         if (currentHealth > maxHealth) currentHealth = maxHealth;
         healthSlider.value = currentHealth;
+        SavePlayerData(); // Simpan setiap perubahan
     }
 
-    // Method untuk menambah stamina (misalnya, dari item)
     public void AddStamina(float amount)
     {
         currentStamina += amount;
         if (currentStamina > maxStamina) currentStamina = maxStamina;
         staminaSlider.value = currentStamina;
+        SavePlayerData(); // Simpan setiap perubahan
+    }
+
+    private void SavePlayerData()
+    {
+        PlayerPrefs.SetFloat("CurrentHealth", currentHealth);
+        PlayerPrefs.SetFloat("CurrentStamina", currentStamina);
+        PlayerPrefs.SetInt("Uang", uang);
+        PlayerPrefs.Save(); // Pastikan disimpan
+    }
+
+    private void LoadPlayerData()
+    {
+        currentHealth = PlayerPrefs.GetFloat("CurrentHealth", maxHealth); // Default ke max jika belum ada
+        currentStamina = PlayerPrefs.GetFloat("CurrentStamina", maxStamina); // Default ke max jika belum ada
+        uang = PlayerPrefs.GetInt("Uang", 1000); // Default ke 1000 jika belum ada
     }
 }

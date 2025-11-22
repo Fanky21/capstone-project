@@ -192,6 +192,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 3
   variableJoystick: {fileID: 0}
+  walkSfxTimer: 0
+  walkSfxInterval: 0.4
 --- !u!114 &5722462556789479254
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,5 +208,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthSlider: {fileID: 0}
   staminaSlider: {fileID: 0}
-  money: 0
-  moneyDisplay: {fileID: 0}
+  uangPlayer: {fileID: 0}
+  maxHealth: 100
+  maxStamina: 100
+  uang: 100000

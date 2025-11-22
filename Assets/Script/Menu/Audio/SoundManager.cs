@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
     public class SoundManager : MonoBehaviour
@@ -39,5 +40,10 @@ using UnityEngine;
         {
             sfx2DSource.PlayOneShot(sfxLibrary.GetClipFromName(soundName));
         }
+
+    internal void PlaySound2D(AudioClip activeWalkSound)
+    {
+        throw new NotImplementedException();
     }
+}
 

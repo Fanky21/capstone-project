@@ -17,7 +17,6 @@ public class MakananManager : MonoBehaviour
 {
     public TextMeshProUGUI kurangHarga;
     public List<MakananBeli> makananList;
-    // Hapus playerMoney lokal, gunakan dari Player.cs
 
     void Start()
     {
@@ -43,7 +42,7 @@ public class MakananManager : MonoBehaviour
                 makanan.staminaMakanan
             );
 
-            Inventory.instance.AddItem(newItem);
+            Inventory.instance.AddMakanan(newItem); // Panggil AddMakanan
 
             Debug.Log("Berhasil membeli: " + makanan.namaMakanan);
         }

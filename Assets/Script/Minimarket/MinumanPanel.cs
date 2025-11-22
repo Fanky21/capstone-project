@@ -58,7 +58,7 @@ public class MinumanPanel : MonoBehaviour
         Time.timeScale = 1f;
 
         if (SoundManager.Instance != null)
-            SoundManager.Instance.PlaySound2D("Button");
+            SoundManager.Instance.PlaySound2D("Arigato");
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -69,6 +69,8 @@ public class MinumanPanel : MonoBehaviour
 
             if (!panelOpen && interactButton != null)
                 interactButton.SetActive(true);
+            if (SoundManager.Instance != null)
+                SoundManager.Instance.PlaySound2D("Irishaimase");
         }
     }
 

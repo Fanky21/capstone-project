@@ -4,17 +4,20 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public float speed = 5f;
-    public FloatingJoystick variableJoystick; // joystick UI
+    public FloatingJoystick variableJoystick;
     private Animator animator;
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
+
     private bool isWalking = false;
     private Vector2 movementInput;
     private bool canMove = true;
 
+    public float walkSfxTimer;
+    public float walkSfxInterval;
+
     private void Awake()
     {
-        // --- LOGIKA SPAWN TERINTEGRASI DIMULAI DI SINI ---
         if (SceneController.instance != null && !string.IsNullOrEmpty(SceneController.instance.TargetSpawnId))
         {
             SpawnPoint[] spawnPoints = FindObjectsByType<SpawnPoint>(FindObjectsSortMode.None);
@@ -32,7 +35,6 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
         }
-        // --- AKHIR LOGIKA SPAWN ---
     }
 
     void Start()
@@ -45,35 +47,28 @@ public class PlayerMovement : MonoBehaviour
         rb.angularDamping = 0f;
         rb.gravityScale = 0f;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-
-        Debug.Log("PlayerMovement initialized at: " + transform.position);
     }
 
     void Update()
     {
         if (!canMove)
         {
-            movementInput = Vector2.zero;
-            isWalking = false;
-            animator.ResetTrigger("isWalking");
-            animator.SetTrigger("isIdle");
+            StopAnimation();
             return;
         }
 
         float horizontal = 0;
         float vertical = 0;
 
-        // --- Input dari Keyboard ---
         if (Input.GetKey(KeyCode.W)) vertical = 1;
         if (Input.GetKey(KeyCode.S)) vertical = -1;
         if (Input.GetKey(KeyCode.A)) horizontal = -1;
         if (Input.GetKey(KeyCode.D)) horizontal = 1;
 
-        // --- Input dari Joystick ---
         if (variableJoystick != null)
         {
-            // Joystick memiliki prioritas jika digunakan
-            if (Mathf.Abs(variableJoystick.Horizontal) > 0.1f || Mathf.Abs(variableJoystick.Vertical) > 0.1f)
+            if (Mathf.Abs(variableJoystick.Horizontal) > 0.1f ||
+                Mathf.Abs(variableJoystick.Vertical) > 0.1f)
             {
                 horizontal = variableJoystick.Horizontal;
                 vertical = variableJoystick.Vertical;
@@ -81,23 +76,11 @@ public class PlayerMovement : MonoBehaviour
         }
 
         movementInput = new Vector2(horizontal, vertical).normalized;
-        isWalking = (movementInput != Vector2.zero);
+        isWalking = movementInput != Vector2.zero;
 
-        if (isWalking)
-        {
-            animator.ResetTrigger("isIdle");
-            animator.SetTrigger("isWalking");
-        }
-        else
-        {
-            animator.ResetTrigger("isWalking");
-            animator.SetTrigger("isIdle");
-        }
-
-        if (horizontal < 0)
-            spriteRenderer.flipX = true;
-        else if (horizontal > 0)
-            spriteRenderer.flipX = false;
+        HandleAnimation();
+        HandleSound();
+        HandleFlip(horizontal);
     }
 
     void FixedUpdate()
@@ -108,24 +91,61 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        rb.linearVelocity = isWalking ? movementInput * speed : Vector2.zero;
+    }
+
+    void HandleAnimation()
+    {
         if (isWalking)
         {
-            rb.linearVelocity = movementInput * speed;
+            animator.ResetTrigger("isIdle");
+            animator.SetTrigger("isWalking");
         }
         else
         {
-            rb.linearVelocity = Vector2.zero;
+            animator.ResetTrigger("isWalking");
+            animator.SetTrigger("isIdle");
         }
+    }
+
+    void HandleSound()
+    {
+        if (isWalking)
+        {
+            walkSfxTimer += Time.deltaTime;
+            if (walkSfxTimer >= walkSfxInterval)
+            {
+                walkSfxTimer = 0f;
+                SoundManager.Instance.PlaySound2D("Walk");
+            }
+        }
+        else
+        {
+            walkSfxTimer = 0f;
+        }
+    }
+
+    void HandleFlip(float horizontal)
+    {
+        if (horizontal < 0)
+            spriteRenderer.flipX = true;
+        else if (horizontal > 0)
+            spriteRenderer.flipX = false;
+    }
+
+    void StopAnimation()
+    {
+        movementInput = Vector2.zero;
+        isWalking = false;
+        animator.ResetTrigger("isWalking");
+        animator.SetTrigger("isIdle");
     }
 
     public void StopMovement()
     {
         canMove = false;
         rb.linearVelocity = Vector2.zero;
-        isWalking = false;
-        movementInput = Vector2.zero;
-        animator.ResetTrigger("isWalking");
-        animator.SetTrigger("isIdle");
+        StopAnimation();
     }
 
     public void AllowMovement()
