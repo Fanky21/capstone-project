@@ -48,6 +48,7 @@ public class MakananManager : MonoBehaviour
         }
         else
         {
+            kurangHarga.text = "X";
             Debug.Log("Uang tidak cukup!");
         }
     }

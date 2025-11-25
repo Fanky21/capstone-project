@@ -1,14 +1,10 @@
 fileFormatVersion: 2
-guid: 83c2d8dc4a87ae16585e88cb53149f32
-AssetOrigin:
-  serializedVersion: 1
-  productId: 174613
-  packageName: Auto Importer for Aseprite LITE
-  packageVersion: 1.2.2
-  assetPath: Assets/AutoImporterForAsepriteLite/Assets/icon.png
-  uploadId: 431700
+guid: 6decedf0663a8ab4aad986066ae6a4a8
 TextureImporter:
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      213: -8006635513670263492
+    second: 9ba1ea9e5ca86568d67a60f6c408d89c_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -41,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -50,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -72,7 +68,7 @@ TextureImporter:
   ignorePngGamma: 0
   applyGammaDecoding: 0
   swizzle: 50462976
-  cookieLightType: 1
+  cookieLightType: 0
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
@@ -115,12 +111,34 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: 9ba1ea9e5ca86568d67a60f6c408d89c_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 26
+        width: 300
+        height: 229
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3d18a9db67b2e090800000000000000
+      internalID: -8006635513670263492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 2a13a2c7c958dfa44a4a7c579a527483
     internalID: 0
     vertices: []
     indices: 
@@ -129,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      9ba1ea9e5ca86568d67a60f6c408d89c_0: -8006635513670263492
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

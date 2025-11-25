@@ -10,7 +10,6 @@ public class InvestPanel : MonoBehaviour
     [SerializeField] private GameObject cryptoPanel;
     [SerializeField] private GameObject sahamPanel;
     [Header("Button Berita")]
-    [SerializeField] private GameObject beritaButton;
     [SerializeField] private GameObject pauseButton;
 
     private bool isInvestOpen = false;
@@ -30,7 +29,6 @@ public class InvestPanel : MonoBehaviour
 
         investPanel.SetActive(true);
         investButton.SetActive(false);
-        beritaButton.SetActive(false);
         pauseButton.SetActive(false);
 
         cryptoPanel.SetActive(true);
@@ -60,7 +58,6 @@ public class InvestPanel : MonoBehaviour
 
         investPanel.SetActive(false);
         investButton.SetActive(true);
-        beritaButton.SetActive(true);
         pauseButton.SetActive(true);
 
         cryptoPanel.SetActive(false);

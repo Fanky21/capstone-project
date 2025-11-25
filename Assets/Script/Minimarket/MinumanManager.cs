@@ -48,6 +48,7 @@ public class MinumanManager : MonoBehaviour
         }
         else
         {
+            kurangHarga.text = "X";
             Debug.Log("Uang tidak cukup!");
         }
     }
