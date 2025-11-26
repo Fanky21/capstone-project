@@ -96,7 +96,7 @@ public class FurnitureManager : MonoBehaviour
         else if (jumlah > 0)
         {
             // Jika positif, tampilkan sebagai kurang uang
-            kurangHarga.text = "Kurang: " + jumlah;
+            kurangHarga.text = "X";
             kurangHarga.color = Color.red; // Warna merah untuk peringatan
         }
         else
