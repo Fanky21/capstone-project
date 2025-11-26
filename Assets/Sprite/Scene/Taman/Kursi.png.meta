@@ -135,10 +135,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 71e9a2530efb84349874e9f50c881148
-      internalID: -1632727858
+      spriteID: c78eb0dc0040401a0800000000000000
+      internalID: -6844341132209690500
       vertices: []
       indices: 
       edges: []
@@ -157,10 +157,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 589befe41411d4e458c7d67309a90339
-      internalID: 550749905
+      spriteID: d49feb2db4c6d9520800000000000000
+      internalID: 2710441623660984653
       vertices: []
       indices: 
       edges: []
@@ -179,10 +179,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 451c0a7dea20e38468ee9ed7a6aa09d8
-      internalID: -1011212674
+      spriteID: 59b5f0415e2cafab0800000000000000
+      internalID: -4973448549337441387
       vertices: []
       indices: 
       edges: []
@@ -192,19 +192,19 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 78
-        y: 1
+        y: 0
         width: 17
-        height: 33
+        height: 34
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 8250d6474b55bf2468904e88e9e2a9b4
-      internalID: 917062940
+      spriteID: 13cc8e427a4328de0800000000000000
+      internalID: -1332444647264826319
       vertices: []
       indices: 
       edges: []
@@ -213,7 +213,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 96fac619d08fa3b48b79e257655b03d1
+    spriteID: 3f11dbdca068fbc448b4bdb467c75fd9
     internalID: 0
     vertices: []
     indices: 
@@ -223,10 +223,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Kursi_0: -1632727858
-      Kursi_1: 550749905
-      Kursi_2: -1011212674
-      Kursi_3: 917062940
+      Kursi_0: -6844341132209690500
+      Kursi_1: 2710441623660984653
+      Kursi_2: -4973448549337441387
+      Kursi_3: -1332444647264826319
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
