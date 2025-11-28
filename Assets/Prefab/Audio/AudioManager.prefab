@@ -308,7 +308,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   musicLibrary: {fileID: 3199702112609027271}
-  musicSource: {fileID: 797758910977835566}
+  musicSource: {fileID: 8274520162341920251}
 --- !u!114 &3199702112609027271
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -321,7 +321,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9962b7513bf9914a82b665a182f79de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tracks: []
+  tracks:
+  - trackName: MainMenu
+    clip: {fileID: 8300000, guid: e0e29e4e56a89d44cbefd586ffda6ecb, type: 3}
+  - trackName: Rumah
+    clip: {fileID: 8300000, guid: e0e29e4e56a89d44cbefd586ffda6ecb, type: 3}
+  - trackName: Luar_Rumah
+    clip: {fileID: 8300000, guid: e0e29e4e56a89d44cbefd586ffda6ecb, type: 3}
+  - trackName: Luar_Minimarket
+    clip: {fileID: 8300000, guid: 2c7d4728e1bb286479d485e580357827, type: 3}
+  - trackName: Minimarket
+    clip: {fileID: 8300000, guid: 2c7d4728e1bb286479d485e580357827, type: 3}
+  - trackName: Area_Furniture
+    clip: {fileID: 8300000, guid: 32523cd6d5842f84c998eef3739af6c1, type: 3}
+  - trackName: Furniture
+    clip: {fileID: 8300000, guid: 32523cd6d5842f84c998eef3739af6c1, type: 3}
+  - trackName: Luar_Taman
+    clip: {fileID: 8300000, guid: 32523cd6d5842f84c998eef3739af6c1, type: 3}
+  - trackName: Area_Bank
+    clip: {fileID: 8300000, guid: e328f027e90bea2438bf6750250cb819, type: 3}
+  - trackName: Bank
+    clip: {fileID: 8300000, guid: e328f027e90bea2438bf6750250cb819, type: 3}
+  - trackName: Area_RS
+    clip: {fileID: 8300000, guid: 0f6123d632ea2514cba04c8e86ea1f88, type: 3}
+  - trackName: Rumah_Sakit
+    clip: {fileID: 8300000, guid: 0f6123d632ea2514cba04c8e86ea1f88, type: 3}
 --- !u!114 &26228201848817566
 MonoBehaviour:
   m_ObjectHideFlags: 0
