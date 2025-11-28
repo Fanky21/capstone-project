@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "title": "US and Asia stocks slide as AI jitters persist",
+    "summary": "Strong sales at artificial intelligence chip giant Nvidia did little to quell investor worries.",
+    "date": "5 days ago",
+    "category": "Market Analysis",
+    "image": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400"
+  },
+  {
+    "id": 2,
+    "title": "Nvidia shares rise after strong results ease 'AI bubble' concerns",
+    "summary": "The chip maker says revenue for the three months to October jumped 62% to $57bn.",
+    "date": "6 days ago",
+    "category": "Tech Stocks",
+    "image": "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400"
+  },
+  {
+    "id": 3,
+    "title": "Nvidia hits new milestone as world's first $51tn company",
+    "summary": "The US chip maker has rapidly climbed from a niche graphics chip manufacturer to an AI titan.",
+    "date": "30 Oct 2025",
+    "category": "Tech Stocks",
+    "image": "https://images.unsplash.com/photo-1633114128174-2f8aa49759b0?w=400"
+  },
+  {
+    "id": 4,
+    "title": "Why Beyond Meat shares surged over 1,000% in four days",
+    "summary": "Shares in the struggling plant-based meat company have rallied as retail traders pile onto stock.",
+    "date": "22 Oct 2025",
+    "category": "Consumer Goods",
+    "image": "https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=400"
+  },
+  {
+    "id": 5,
+    "title": "How nervous are investors about the stock market?",
+    "summary": "As shares remain high, investors have been jumping at signs of trouble.",
+    "date": "18 Oct 2025",
+    "category": "Market Analysis",
+    "image": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=400"
+  },
+  {
+    "id": 6,
+    "title": "Fears over US banks cause stock market jitters",
+    "summary": "Problems at two US regional banks have made investors nervous and triggered a sell-off in shares.",
+    "date": "16 Oct 2025",
+    "category": "Banking",
+    "image": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400"
+  },
+  {
+    "id": 7,
+    "title": "EcoHealth Ltd announces major sustainability initiative",
+    "summary": "The property giant commits to carbon-neutral operations by 2030, boosting investor confidence.",
+    "date": "12 Oct 2025",
+    "category": "ESG",
+    "image": "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=400"
+  },
+  {
+    "id": 8,
+    "title": "IndoDigital Ltd expands to Southeast Asian markets",
+    "summary": "Financial services company announces partnerships with major banks across ASEAN region.",
+    "date": "10 Oct 2025",
+    "category": "Finance",
+    "image": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=400"
+  },
+  {
+    "id": 9,
+    "title": "Tech sector sees unprecedented growth in Q3",
+    "summary": "Telecommunications and technology stocks lead market gains with average 15% increase.",
+    "date": "8 Oct 2025",
+    "category": "Tech Stocks",
+    "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400"
+  },
+  {
+    "id": 10,
+    "title": "Mining sector faces challenges amid global economic shifts",
+    "summary": "AstraMining and AndalasMining report lower earnings as commodity prices fluctuate.",
+    "date": "5 Oct 2025",
+    "category": "Mining",
+    "image": "https://images.unsplash.com/photo-1541692641319-981cc79ee10a?w=400"
+  },
+  {
+    "id": 11,
+    "title": "Pharmaceutical companies surge on breakthrough treatments",
+    "summary": "BorneoPharma and GlobalPharma stocks jump 20% following FDA approval announcements.",
+    "date": "2 Oct 2025",
+    "category": "Healthcare",
+    "image": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400"
+  },
+  {
+    "id": 12,
+    "title": "Retail sector rebounds as consumer spending increases",
+    "summary": "MeridianFinance and NeoSteel report strong quarterly earnings beating analyst expectations.",
+    "date": "28 Sep 2025",
+    "category": "Retail",
+    "image": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400"
+  },
+  {
+    "id": 13,
+    "title": "Energy sector volatility continues amid policy changes",
+    "summary": "PapuaEnergy and BorneoFinance stocks fluctuate as government announces new regulations.",
+    "date": "25 Sep 2025",
+    "category": "Energy",
+    "image": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=400"
+  },
+  {
+    "id": 14,
+    "title": "Insurance companies adapt to digital transformation",
+    "summary": "FutureHealth and GarudaVision invest heavily in AI and automation technologies.",
+    "date": "20 Sep 2025",
+    "category": "Insurance",
+    "image": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400"
+  },
+  {
+    "id": 15,
+    "title": "Agriculture tech startups attract major investments",
+    "summary": "CakraTrans and GarudaCom receive funding for innovative farming solutions.",
+    "date": "15 Sep 2025",
+    "category": "Agriculture",
+    "image": "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400"
+  }
+]
