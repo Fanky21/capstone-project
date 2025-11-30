@@ -1,7 +1,16 @@
 using UnityEngine;
+using System;
 
 public class InitFlask : MonoBehaviour
 {
+    private int currentMoney = 0;
+    
+    // Property to get current money
+    public int CurrentMoney => currentMoney;
+    
+    // Event to notify when money is updated
+    public event Action<int> OnMoneyUpdated;
+    
     public void getFlaskMoney()
     {
         StartCoroutine(GetFlaskMoneyCoroutine());
@@ -15,6 +24,21 @@ public class InitFlask : MonoBehaviour
             if (request.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
             {
                 Debug.Log("Get Money: " + request.downloadHandler.text);
+                
+                // Parse JSON response
+                try
+                {
+                    MoneyResponse response = JsonUtility.FromJson<MoneyResponse>(request.downloadHandler.text);
+                    currentMoney = response.money;
+                    Debug.Log("Money updated: " + currentMoney);
+                    
+                    // Notify listeners
+                    OnMoneyUpdated?.Invoke(currentMoney);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Failed to parse money response: " + e.Message);
+                }
             }
             else
             {
@@ -79,6 +103,14 @@ public class InitFlask : MonoBehaviour
     private class MoneyData
     {
         public int amount;
+    }
+    
+    [System.Serializable]
+    private class MoneyResponse
+    {
+        public bool success;
+        public int money;
+        public string timestamp;
     }
 
 }
