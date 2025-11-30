@@ -34,6 +34,10 @@ companies = load_companies()
 active_news = []  # Latest news (max 10)
 old_news = []     # Archived news
 
+# Global money and portfolio (shared across all users)
+global_cash = 1
+global_portfolio = []
+
 # Initialize news generator
 try:
     news_generator = NewsGenerator()
@@ -47,12 +51,26 @@ initial_news = load_news()
 active_news = initial_news[:10] if len(initial_news) > 10 else initial_news
 old_news = initial_news[10:] if len(initial_news) > 10 else []
 
-# Initialize user data in session
-def init_session():
-    if 'cash' not in session:
-        session['cash'] = 108654
-    if 'portfolio' not in session:
-        session['portfolio'] = []
+# Money and portfolio functions (global system)
+def get_global_money():
+    global global_cash
+    return global_cash
+
+def set_global_money(amount):
+    global global_cash
+    global_cash = amount
+
+def add_global_money(amount):
+    global global_cash
+    global_cash += amount
+
+def subtract_global_money(amount):
+    global global_cash
+    global_cash -= amount
+    
+def get_global_portfolio():
+    global global_portfolio
+    return global_portfolio
 
 @app.route('/')
 def index():
@@ -62,7 +80,6 @@ def index():
 @app.route('/markets')
 def markets():
     """Markets page"""
-    init_session()
     return render_template('markets.html')
 
 @app.route('/api/news', methods=['GET'])
@@ -99,11 +116,10 @@ def get_company(ticker):
 
 @app.route('/api/portfolio', methods=['GET'])
 def get_portfolio():
-    """Get user portfolio"""
-    init_session()
+    """Get global portfolio"""
     portfolio_with_details = []
     
-    for item in session['portfolio']:
+    for item in get_global_portfolio():
         company = next((c for c in companies if c['ticker'] == item['ticker']), None)
         if company:
             portfolio_with_details.append({
@@ -117,21 +133,20 @@ def get_portfolio():
             })
     
     return jsonify({
-        'cash': session['cash'],
+        'cash': get_global_money(),
         'portfolio': portfolio_with_details,
-        'totalValue': session['cash'] + sum(item['currentPrice'] * item['shares'] for item in portfolio_with_details)
+        'totalValue': get_global_money() + sum(item['currentPrice'] * item['shares'] for item in portfolio_with_details)
     })
 
 @app.route('/api/cash', methods=['GET'])
 def get_cash():
-    """Get user cash"""
-    init_session()
-    return jsonify({'cash': session['cash']})
+    """Get global cash"""
+    return jsonify({'cash': get_global_money()})
 
 @app.route('/api/trade', methods=['POST'])
 def trade():
     """Execute a trade (buy/sell)"""
-    init_session()
+    global global_portfolio
     data = request.json
     
     action = data.get('action')  # 'buy' or 'sell'
@@ -148,14 +163,14 @@ def trade():
     if action == 'buy':
         cost = shares * company['currentPrice']
         
-        if cost > session['cash']:
+        if cost > get_global_money():
             return jsonify({'error': 'Insufficient funds'}), 400
         
         # Deduct cash
-        session['cash'] -= cost
+        subtract_global_money(cost)
         
         # Update portfolio
-        portfolio = session['portfolio']
+        portfolio = get_global_portfolio()
         existing = next((p for p in portfolio if p['ticker'] == ticker), None)
         
         if existing:
@@ -170,17 +185,14 @@ def trade():
                 'avgPrice': company['currentPrice']
             })
         
-        session['portfolio'] = portfolio
-        session.modified = True
-        
         return jsonify({
             'success': True,
             'message': f'Successfully bought {shares} shares of {ticker}',
-            'cash': session['cash']
+            'cash': get_global_money()
         })
     
     elif action == 'sell':
-        portfolio = session['portfolio']
+        portfolio = get_global_portfolio()
         existing = next((p for p in portfolio if p['ticker'] == ticker), None)
         
         if not existing or existing['shares'] < shares:
@@ -189,20 +201,17 @@ def trade():
         revenue = shares * company['currentPrice']
         
         # Add cash
-        session['cash'] += revenue
+        add_global_money(revenue)
         
         # Update portfolio
         existing['shares'] -= shares
         if existing['shares'] == 0:
             portfolio.remove(existing)
         
-        session['portfolio'] = portfolio
-        session.modified = True
-        
         return jsonify({
             'success': True,
             'message': f'Successfully sold {shares} shares of {ticker}',
-            'cash': session['cash']
+            'cash': get_global_money()
         })
     
     return jsonify({'error': 'Invalid action'}), 400
@@ -233,14 +242,14 @@ def update_prices():
 @app.route('/api/reset', methods=['POST'])
 def reset_portfolio():
     """Reset portfolio and cash"""
-    session['cash'] = 108654
-    session['portfolio'] = []
-    session.modified = True
+    global global_portfolio
+    set_global_money(1)
+    global_portfolio = []
     
     return jsonify({
         'success': True,
         'message': 'Portfolio reset successfully',
-        'cash': session['cash']
+        'cash': get_global_money()
     })
 
 @app.route('/api/stats', methods=['GET'])
@@ -262,18 +271,16 @@ def get_stats():
 
 @app.route('/api/unity/money/check', methods=['GET'])
 def unity_check_money():
-    """Unity: Check player money"""
-    init_session()
+    """Unity: Check global money"""
     return jsonify({
         'success': True,
-        'money': session['cash'],
+        'money': get_global_money(),
         'timestamp': datetime.now().isoformat()
     })
 
 @app.route('/api/unity/money/add', methods=['POST'])
 def unity_add_money():
-    """Unity: Add money to player"""
-    init_session()
+    """Unity: Add money globally"""
     data = request.json
     amount = float(data.get('amount', 0))
     
@@ -283,21 +290,20 @@ def unity_add_money():
             'error': 'Amount must be positive'
         }), 400
     
-    session['cash'] += amount
-    session.modified = True
+    previous_money = get_global_money()
+    add_global_money(amount)
     
     return jsonify({
         'success': True,
         'message': f'Added ${amount:,.2f}',
-        'previousMoney': session['cash'] - amount,
-        'currentMoney': session['cash'],
+        'previousMoney': previous_money,
+        'currentMoney': get_global_money(),
         'timestamp': datetime.now().isoformat()
     })
 
 @app.route('/api/unity/money/subtract', methods=['POST'])
 def unity_subtract_money():
-    """Unity: Subtract money from player"""
-    init_session()
+    """Unity: Subtract money globally"""
     data = request.json
     amount = float(data.get('amount', 0))
     
@@ -307,29 +313,28 @@ def unity_subtract_money():
             'error': 'Amount must be positive'
         }), 400
     
-    if amount > session['cash']:
+    if amount > get_global_money():
         return jsonify({
             'success': False,
             'error': 'Insufficient funds',
-            'currentMoney': session['cash'],
+            'currentMoney': get_global_money(),
             'requestedAmount': amount
         }), 400
     
-    session['cash'] -= amount
-    session.modified = True
+    previous_money = get_global_money()
+    subtract_global_money(amount)
     
     return jsonify({
         'success': True,
         'message': f'Subtracted ${amount:,.2f}',
-        'previousMoney': session['cash'] + amount,
-        'currentMoney': session['cash'],
+        'previousMoney': previous_money,
+        'currentMoney': get_global_money(),
         'timestamp': datetime.now().isoformat()
     })
 
 @app.route('/api/unity/money/set', methods=['POST'])
 def unity_set_money():
-    """Unity: Set player money to specific amount"""
-    init_session()
+    """Unity: Set global money to specific amount"""
     data = request.json
     amount = float(data.get('amount', 0))
     
@@ -339,15 +344,14 @@ def unity_set_money():
             'error': 'Amount cannot be negative'
         }), 400
     
-    previous = session['cash']
-    session['cash'] = amount
-    session.modified = True
+    previous_money = get_global_money()
+    set_global_money(amount)
     
     return jsonify({
         'success': True,
         'message': f'Money set to ${amount:,.2f}',
-        'previousMoney': previous,
-        'currentMoney': session['cash'],
+        'previousMoney': previous_money,
+        'currentMoney': get_global_money(),
         'timestamp': datetime.now().isoformat()
     })
 
@@ -363,6 +367,119 @@ def unity_health():
     })
 
 # ==================== END UNITY API ENDPOINTS ====================
+
+# ==================== MONEY MANAGEMENT API ENDPOINTS ====================
+
+@app.route('/api/money/get', methods=['GET'])
+def api_get_money():
+    """API: Get current money amount"""
+    return jsonify({
+        'success': True,
+        'money': get_global_money(),
+        'timestamp': datetime.now().isoformat()
+    })
+
+@app.route('/api/money/add', methods=['POST'])
+def api_add_money():
+    """API: Add money"""
+    data = request.json
+    
+    if not data:
+        return jsonify({
+            'success': False,
+            'error': 'No data provided'
+        }), 400
+    
+    amount = data.get('amount')
+    
+    if amount is None:
+        return jsonify({
+            'success': False,
+            'error': 'Amount is required'
+        }), 400
+    
+    try:
+        amount = float(amount)
+    except (ValueError, TypeError):
+        return jsonify({
+            'success': False,
+            'error': 'Amount must be a valid number'
+        }), 400
+    
+    if amount <= 0:
+        return jsonify({
+            'success': False,
+            'error': 'Amount must be positive'
+        }), 400
+    
+    previous_money = get_global_money()
+    add_global_money(amount)
+    
+    return jsonify({
+        'success': True,
+        'message': f'Successfully added {amount}',
+        'previousMoney': previous_money,
+        'currentMoney': get_global_money(),
+        'addedAmount': amount,
+        'timestamp': datetime.now().isoformat()
+    })
+
+@app.route('/api/money/subtract', methods=['POST'])
+def api_subtract_money():
+    """API: Subtract money"""
+    data = request.json
+    
+    if not data:
+        return jsonify({
+            'success': False,
+            'error': 'No data provided'
+        }), 400
+    
+    amount = data.get('amount')
+    
+    if amount is None:
+        return jsonify({
+            'success': False,
+            'error': 'Amount is required'
+        }), 400
+    
+    try:
+        amount = float(amount)
+    except (ValueError, TypeError):
+        return jsonify({
+            'success': False,
+            'error': 'Amount must be a valid number'
+        }), 400
+    
+    if amount <= 0:
+        return jsonify({
+            'success': False,
+            'error': 'Amount must be positive'
+        }), 400
+    
+    current_money = get_global_money()
+    
+    if amount > current_money:
+        return jsonify({
+            'success': False,
+            'error': 'Insufficient funds',
+            'currentMoney': current_money,
+            'requestedAmount': amount
+        }), 400
+    
+    previous_money = current_money
+    subtract_global_money(amount)
+    
+    return jsonify({
+        'success': True,
+        'message': f'Successfully subtracted {amount}',
+        'previousMoney': previous_money,
+        'currentMoney': get_global_money(),
+        'subtractedAmount': amount,
+        'timestamp': datetime.now().isoformat()
+    })
+
+# ==================== END MONEY MANAGEMENT API ENDPOINTS ====================
 
 if __name__ == '__main__':
     # Start background news generation
