@@ -1,0 +1,115 @@
+## FAMILY MONEY REQUEST SYSTEM - QUICK SETUP CHECKLIST
+
+### Files Created/Modified
+✅ DialogueManager.cs - Enhanced with button system
+✅ KeluargaManager.cs - Main family money system
+✅ PlayerMoneyManager.cs - Player money management
+
+---
+
+### Unity Setup Steps
+
+#### 1. Create Button Prefab for Choices
+- [ ] In your Canvas hierarchy, create a Button UI element
+- [ ] Rename it to "ChoiceButtonPrefab"
+- [ ] Add TextMeshProUGUI as child for button text
+- [ ] Style it (colors, size, font, etc.)
+- [ ] Delete it from hierarchy (or save as prefab first)
+- [ ] Create a folder "Assets/Prefab" if not exists
+- [ ] Save as prefab: "Assets/Prefab/ChoiceButton.prefab"
+
+#### 2. Setup DialogueManager
+- [ ] Select GameObject with DialogueManager component
+- [ ] In Inspector, find new fields:
+  - [ ] **Choice Button Prefab** → Drag ChoiceButton.prefab here
+  - [ ] **Choice Container** → Assign a Panel or HorizontalLayoutGroup for buttons
+  - [ ] **Continue Button** → Assign the continue button (if exists)
+
+#### 3. Create PlayerMoneyManager
+- [ ] Create new empty GameObject in scene
+- [ ] Rename to "PlayerMoneyManager"
+- [ ] Add component: PlayerMoneyManager.cs
+- [ ] Set initial player money (default: 50000)
+
+#### 4. Create KeluargaManager
+- [ ] Create new empty GameObject in scene
+- [ ] Rename to "KeluargaManager"
+- [ ] Add component: KeluargaManager.cs
+- [ ] In Inspector, configure:
+  - [ ] **Min Request Interval** = 10 (menit)
+  - [ ] **Max Request Interval** = 15 (menit)
+  - [ ] **Money Amount** = 10000 (jumlah permintaan awal)
+  - [ ] **Keluarga Character** → Create new DialogueCharacter with name "Keluarga"
+
+---
+
+### Testing
+- [ ] Press Play
+- [ ] Wait 10-15 seconds (game time) OR set min/max to 0.5 for quick test
+- [ ] Family dialogue should appear
+- [ ] Click "Terima" (Accept) or "Tolak" (Refuse)
+- [ ] Check console for money changes
+
+---
+
+### Money System Flow
+```
+Awal: Rp10.000 (multiplier = 1x)
+   ↓
+[Accept] → Uang -10.000, Reset ke 1x
+   OR
+[Refuse] → Multiplier = 2x (next: Rp20.000)
+   ↓
+[Accept] → Uang -20.000, Reset ke 1x
+   OR
+[Refuse] → Multiplier = 4x (next: Rp40.000)
+```
+
+---
+
+### Customization
+
+**Change dialog text:**
+- Edit KeluargaManager.cs → MakeMoneyRequest() method
+- Modify line1.line and line2.line strings
+
+**Change request interval:**
+- KeluargaManager Inspector → Min/Max Request Interval
+
+**Change initial money amount:**
+- PlayerMoneyManager Inspector → Player Money
+
+**Change requested money amount:**
+- KeluargaManager Inspector → Money Amount
+
+---
+
+### Debug Console Messages
+Look for these in Console when testing:
+```
+Pemain menerima memberikan Rp10000
+Uang berkurang: -Rp10000. Total: Rp40000
+
+atau
+
+Pemain menolak - Utang menjadi 2x lipat!
+```
+
+---
+
+### Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Buttons don't appear | Check Choice Container is assigned & not null |
+| Dialog doesn't start | Verify KeluargaManager is in scene |
+| Money doesn't change | Check PlayerMoneyManager is in scene with correct money |
+| Dialog boxes overlap | Adjust UI Canvas layers or sorting order |
+
+---
+
+### Notes
+- Time is in game seconds (use Time.timeScale to speed up testing)
+- For quick testing, set min/max interval to 0.5 minutes
+- Debt persists until player accepts
+- System uses Singleton pattern (Instance)

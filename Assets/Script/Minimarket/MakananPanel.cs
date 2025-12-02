@@ -60,6 +60,8 @@ public class MakananPanel : MonoBehaviour
         Time.timeScale = 1f;
 
         if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySound2D("Button");
+        if (SoundManager.Instance != null)
             SoundManager.Instance.PlaySound2D("Arigato");
     }
 

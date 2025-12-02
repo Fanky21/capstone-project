@@ -326,7 +326,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: e0e29e4e56a89d44cbefd586ffda6ecb, type: 3}
   - trackName: Rumah
     clip: {fileID: 8300000, guid: e0e29e4e56a89d44cbefd586ffda6ecb, type: 3}
-  - trackName: Luar_Rumah
+  - trackName: Luar_rumah
     clip: {fileID: 8300000, guid: e0e29e4e56a89d44cbefd586ffda6ecb, type: 3}
   - trackName: Luar_Minimarket
     clip: {fileID: 8300000, guid: 2c7d4728e1bb286479d485e580357827, type: 3}

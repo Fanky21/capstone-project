@@ -47,6 +47,8 @@ public class ObatPanel : MonoBehaviour
 
         if (SoundManager.Instance != null)
             SoundManager.Instance.PlaySound2D("Button");
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySound2D("Irishaimase");
     }
 
     public void CloseFurniturePanel()
@@ -59,6 +61,8 @@ public class ObatPanel : MonoBehaviour
 
         if (SoundManager.Instance != null)
             SoundManager.Instance.PlaySound2D("Button");
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySound2D("Arigato");
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -69,6 +73,9 @@ public class ObatPanel : MonoBehaviour
 
             if (!panelOpen && interactButton != null)
                 interactButton.SetActive(true);
+                
+            if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySound2D("Irishaimase");
         }
     }
 

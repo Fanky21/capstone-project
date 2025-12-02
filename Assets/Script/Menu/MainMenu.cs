@@ -58,6 +58,9 @@ public class MainMenu : MonoBehaviour
 
     public void NewGame()
     {
+        // Reset player stats sebelum memulai game baru
+        ResetPlayerStats();
+        SaveCurrentScene(1);
         SceneManager.LoadScene(1);
     }
 
@@ -73,6 +76,25 @@ public class MainMenu : MonoBehaviour
         {
             Debug.LogWarning("Tidak ada save game yang ditemukan!");
         }
+    }
+
+    private void SaveCurrentScene(int sceneIndex)
+    {
+        PlayerPrefs.SetInt("SavedScene", sceneIndex);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>
+    /// Reset health dan stamina player ke nilai maksimal
+    /// </summary>
+    private void ResetPlayerStats()
+    {
+        // Reset health dan stamina ke 100
+        PlayerPrefs.SetFloat("CurrentHealth", 100f);
+        PlayerPrefs.SetFloat("CurrentStamina", 100f);
+        PlayerPrefs.Save();
+
+        Debug.Log("Player stats telah di-reset: Health = 100, Stamina = 100");
     }
 
     public void OpenMainMenuPanel()
@@ -141,5 +163,39 @@ public class MainMenu : MonoBehaviour
 
         isMainMenuPanel = true;
         mainMenuPanel?.SetActive(true);
+    }
+
+    /// <summary>
+    /// Load scene dan simpan sebagai current scene
+    /// </summary>
+    public void LoadSceneWithSave(int sceneIndex)
+    {
+        SaveCurrentScene(sceneIndex);
+        SceneManager.LoadScene(sceneIndex);
+    }
+
+    /// <summary>
+    /// Load scene berdasarkan nama dan simpan
+    /// </summary>
+    public void LoadSceneWithSaveByName(string sceneName)
+    {
+        int sceneIndex = SceneUtility.GetBuildIndexByScenePath($"Assets/Scenes/{sceneName}.unity");
+        if (sceneIndex >= 0)
+        {
+            SaveCurrentScene(sceneIndex);
+            SceneManager.LoadScene(sceneName);
+        }
+        else
+        {
+            Debug.LogError($"Scene '{sceneName}' tidak ditemukan di Build Settings!");
+        }
+    }
+
+    /// <summary>
+    /// Kembali ke Main Menu
+    /// </summary>
+    public void ReturnToMainMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 }
