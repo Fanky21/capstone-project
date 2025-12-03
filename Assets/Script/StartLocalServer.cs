@@ -6,8 +6,9 @@ using UnityEngine.Networking;
 using System.Collections;
 
 /// <summary>
-/// Start and manage the AndroidAsync Local Server
-/// This script manages the lifecycle of the Java-based AndroidAsync HTTP server
+/// Start and manage the Local Trading Server
+/// PC/Editor: Uses Java HttpServer process
+/// Android: Uses NanoHTTPD embedded in APK
 /// </summary>
 public class StartLocalServer : MonoBehaviour
 {
@@ -18,17 +19,18 @@ public class StartLocalServer : MonoBehaviour
     [Tooltip("Automatically start server on awake")]
     public bool autoStart = true;
     
-    [Tooltip("Server executable path (relative to Assets folder)")]
-    public string serverPath = "Local Server";
+    [Tooltip("Server path relative to project root (PC/Editor only)")]
+    public string serverPath = "LocalServer";
     
-    [Tooltip("Java executable path (leave empty for system Java)")]
+    [Tooltip("Java executable path (PC/Editor only)")]
     public string javaPath = "java";
     
     [Header("Server Status")]
     [SerializeField] private bool isServerRunning = false;
     [SerializeField] private string serverStatus = "Not Started";
     
-    private Process serverProcess;
+    private Process serverProcess; // PC/Editor only
+    private AndroidJavaClass androidServerBridge; // Android only
     private string serverUrl;
     
     void Awake()
@@ -52,7 +54,7 @@ public class StartLocalServer : MonoBehaviour
     }
     
     /// <summary>
-    /// Start the AndroidAsync server
+    /// Start the server (Android or PC/Editor)
     /// </summary>
     public void StartServer()
     {
@@ -62,9 +64,70 @@ public class StartLocalServer : MonoBehaviour
             return;
         }
         
+        #if UNITY_ANDROID && !UNITY_EDITOR
+            StartAndroidServer();
+        #else
+            StartPCServer();
+        #endif
+    }
+    
+    /// <summary>
+    /// Start server on Android using NanoHTTPD
+    /// </summary>
+    private void StartAndroidServer()
+    {
         try
         {
-            string fullServerPath = Path.Combine(Application.dataPath, serverPath);
+            // Get Android Java bridge
+            androidServerBridge = new AndroidJavaClass("com.trading.localserver.TradingServerBridge");
+            
+            // Initialize bridge
+            androidServerBridge.CallStatic("initialize");
+            
+            // Start server with StreamingAssets path
+            string streamingAssetsPath = Application.streamingAssetsPath;
+            bool success = androidServerBridge.CallStatic<bool>("startServer", streamingAssetsPath);
+            
+            if (success)
+            {
+                isServerRunning = true;
+                serverStatus = "Starting...";
+                UnityEngine.Debug.Log("Android Trading Server starting on port " + serverPort);
+                UnityEngine.Debug.Log("StreamingAssets path: " + streamingAssetsPath);
+                
+                // Check server health
+                StartCoroutine(CheckServerHealth());
+            }
+            else
+            {
+                serverStatus = "Failed to start";
+                UnityEngine.Debug.LogError("Failed to start Android server");
+            }
+        }
+        catch (Exception e)
+        {
+            UnityEngine.Debug.LogError($"Android server error: {e.Message}");
+            serverStatus = $"Error: {e.Message}";
+            isServerRunning = false;
+        }
+    }
+    
+    /// <summary>
+    /// Start server on PC/Editor using Java process
+    /// </summary>
+    private void StartPCServer()
+    {
+        if (isServerRunning)
+        {
+            UnityEngine.Debug.LogWarning("Server is already running!");
+            return;
+        }
+        
+        try
+        {
+            // Get project root directory (parent of Assets)
+            string projectRoot = Directory.GetParent(Application.dataPath).FullName;
+            string fullServerPath = Path.Combine(projectRoot, serverPath);
             
             if (!Directory.Exists(fullServerPath))
             {
@@ -129,9 +192,47 @@ public class StartLocalServer : MonoBehaviour
     }
     
     /// <summary>
-    /// Stop the AndroidAsync server
+    /// Stop the server (Android or PC/Editor)
     /// </summary>
     public void StopServer()
+    {
+        #if UNITY_ANDROID && !UNITY_EDITOR
+            StopAndroidServer();
+        #else
+            StopPCServer();
+        #endif
+    }
+    
+    /// <summary>
+    /// Stop Android server
+    /// </summary>
+    private void StopAndroidServer()
+    {
+        if (!isServerRunning || androidServerBridge == null)
+        {
+            return;
+        }
+        
+        try
+        {
+            androidServerBridge.CallStatic("stopServer");
+            androidServerBridge = null;
+            
+            isServerRunning = false;
+            serverStatus = "Stopped";
+            
+            UnityEngine.Debug.Log("Android Trading Server stopped");
+        }
+        catch (Exception e)
+        {
+            UnityEngine.Debug.LogError($"Error stopping Android server: {e.Message}");
+        }
+    }
+    
+    /// <summary>
+    /// Stop PC/Editor server
+    /// </summary>
+    private void StopPCServer()
     {
         if (!isServerRunning || serverProcess == null)
         {
@@ -206,26 +307,23 @@ public class StartLocalServer : MonoBehaviour
     /// </summary>
     private string BuildClasspath(string serverPath)
     {
-        // Add current directory (for compiled classes)
+        // Start with current directory
         string classpath = ".";
         
-        // Add all JAR files in the directory
-        string[] jarFiles = Directory.GetFiles(serverPath, "*.jar", SearchOption.AllDirectories);
-        foreach (string jar in jarFiles)
-        {
-            classpath += Path.PathSeparator + jar;
-        }
-        
-        // Add libs directory if exists
+        // Add libs directory with full path to JAR files
         string libsPath = Path.Combine(serverPath, "libs");
         if (Directory.Exists(libsPath))
         {
-            string[] libJars = Directory.GetFiles(libsPath, "*.jar");
-            foreach (string jar in libJars)
+            string[] jarFiles = Directory.GetFiles(libsPath, "*.jar");
+            foreach (string jar in jarFiles)
             {
-                classpath += Path.PathSeparator + jar;
+                // Use relative path from working directory
+                classpath += ";libs\\" + Path.GetFileName(jar);
             }
         }
+        
+        UnityEngine.Debug.Log($"Server Path: {serverPath}");
+        UnityEngine.Debug.Log($"Classpath: {classpath}");
         
         return classpath;
     }

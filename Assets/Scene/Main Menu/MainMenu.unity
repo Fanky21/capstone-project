@@ -5547,7 +5547,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serverPort: 5000
   autoStart: 1
-  serverPath: Local Server
+  serverPath: LocalServer
   javaPath: java
   isServerRunning: 0
   serverStatus: Not Started

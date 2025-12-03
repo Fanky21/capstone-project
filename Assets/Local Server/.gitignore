@@ -1,0 +1,14 @@
+# Ignore all files except documentation
+*.java
+*.class
+*.jar
+*.json
+*.html
+*.js
+*.css
+*.ps1
+*.bat
+
+# Keep only markdown documentation
+!*.md
+!README_MOVED.md

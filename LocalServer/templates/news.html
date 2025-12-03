@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIT - Compounders International Trading</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <h1>CIT</h1>
+                <p>COMPOUNDERS INTERNATIONAL<br><span>TRADING</span></p>
+            </div>
+            <div class="cash-display">
+                <span>My Cash</span>
+                <div class="cash-amount" id="cashAmount">$108,654</div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navigation">
+            <a href="/" class="nav-btn active" id="newsBtn">News</a>
+            <a href="/markets" class="nav-btn" id="marketsBtn">Markets</a>
+            <button class="nav-btn" id="portfolioBtn">My Portfolio</button>
+        </nav>
+
+        <!-- Market Ticker -->
+        <div class="ticker" id="ticker">
+            <div class="ticker-content">
+                <span class="ticker-item">Loading market data...</span>
+            </div>
+        </div>
+
+        <!-- News Content -->
+        <div class="main-content news-page">
+            <h1 class="page-title">Stock Markets News</h1>
+            
+            <!-- Featured News -->
+            <div id="featuredNews" class="featured-news">
+                <!-- Featured article will be loaded here -->
+            </div>
+
+            <!-- News Grid -->
+            <div id="newsGrid" class="news-grid">
+                <!-- News articles will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Article Detail Modal -->
+        <div class="portfolio-modal hidden" id="articleModal">
+            <div class="portfolio-content" style="max-width: 900px;">
+                <div class="portfolio-header">
+                    <h2>Article</h2>
+                    <button class="close-btn" id="closeArticle">×</button>
+                </div>
+                <div id="articleContent">
+                    <!-- Article content will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Portfolio View (Modal) -->
+        <div class="portfolio-modal hidden" id="portfolioModal">
+            <div class="portfolio-content">
+                <div class="portfolio-header">
+                    <h2>My Portfolio</h2>
+                    <button class="close-btn" id="closePortfolio">×</button>
+                </div>
+                
+                <div class="portfolio-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Value</span>
+                        <span class="stat-value" id="portfolioValue">$0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Profit/Loss</span>
+                        <span class="stat-value" id="portfolioProfit">$0</span>
+                    </div>
+                </div>
+                
+                <table class="stocks-table">
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Shares</th>
+                            <th>Avg. Buy Price</th>
+                            <th>Current Price</th>
+                            <th>Profit/Loss</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="portfolioTableBody">
+                        <!-- Portfolio items will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Custom Alert Modal -->
+        <div class="custom-alert hidden" id="customAlert">
+            <div class="alert-content">
+                <div class="alert-icon" id="alertIcon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <div class="alert-message" id="alertMessage">Alert message</div>
+                <button class="alert-btn" id="alertOkBtn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/news.js') }}"></script>
+</body>
+</html>
