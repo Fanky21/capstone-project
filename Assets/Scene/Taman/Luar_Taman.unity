@@ -872,7 +872,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e625e560a04cc74daaddf110bacd6f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetSceneName: Luar_RS
+  targetSceneName: Area_RS
   targetSpawnPointId: To_Area_RS
 --- !u!1 &321304694
 GameObject:
