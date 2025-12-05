@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Price Update Test</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1e1e1e; color: #d4d4d4; }
+        .test { margin: 20px 0; padding: 15px; background: #2d2d2d; border-left: 4px solid #007acc; }
+        .success { border-left-color: #4ec9b0; }
+        .error { border-left-color: #f48771; }
+        button { padding: 10px 20px; background: #007acc; color: white; border: none; cursor: pointer; margin: 5px; }
+        button:hover { background: #005a9e; }
+        pre { background: #1e1e1e; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Price Update Tester</h1>
+    
+    <button onclick="test1()">1. Fetch Initial</button>
+    <button onclick="test2()">2. Trigger Update</button>
+    <button onclick="test3()">3. Fetch After Update</button>
+    <button onclick="runAll()">▶ Run All Tests</button>
+    
+    <div id="results"></div>
+    
+    <script>
+        let before = null;
+        let after = null;
+        
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = 'test ' + (type === 'success' ? 'success' : type === 'error' ? 'error' : '');
+            div.innerHTML = message;
+            document.getElementById('results').appendChild(div);
+        }
+        
+        async function test1() {
+            log('<h3>📊 Test 1: Fetch Initial Prices</h3>');
+            try {
+                const response = await fetch('/api/companies');
+                before = await response.json();
+                const first = before[0];
+                log(`<pre>Company: ${first.ticker}
+Current Price: ${first.currentPrice}
+Previous Price: ${first.previousPrice}
+Change: ${first.change}
+Change %: ${first.changePercent}%</pre>`, 'info');
+            } catch (e) {
+                log(`<pre>ERROR: ${e.message}</pre>`, 'error');
+            }
+        }
+        
+        async function test2() {
+            log('<h3>⚡ Test 2: Trigger Manual Update</h3>');
+            try {
+                const response = await fetch('/api/update-prices', { method: 'POST' });
+                const result = await response.json();
+                log(`<pre>Success: ${result.success}
+Companies: ${result.companies.length}</pre>`, 'success');
+            } catch (e) {
+                log(`<pre>ERROR: ${e.message}</pre>`, 'error');
+            }
+        }
+        
+        async function test3() {
+            log('<h3>📊 Test 3: Fetch After Update</h3>');
+            try {
+                const response = await fetch('/api/companies');
+                after = await response.json();
+                const first = after[0];
+                log(`<pre>Company: ${first.ticker}
+Current Price: ${first.currentPrice}
+Previous Price: ${first.previousPrice}
+Change: ${first.change}
+Change %: ${first.changePercent}%</pre>`, 'info');
+                
+                if (before) {
+                    log('<h3>📈 Comparison</h3>');
+                    if (before[0].currentPrice === after[0].currentPrice) {
+                        log(`<pre>❌ STUCK: Price tidak berubah (${before[0].currentPrice})</pre>`, 'error');
+                    } else {
+                        log(`<pre>✓ WORKING: Price berubah!
+Before: ${before[0].currentPrice}
+After: ${after[0].currentPrice}
+Difference: ${(after[0].currentPrice - before[0].currentPrice).toFixed(2)}</pre>`, 'success');
+                    }
+                }
+            } catch (e) {
+                log(`<pre>ERROR: ${e.message}</pre>`, 'error');
+            }
+        }
+        
+        async function runAll() {
+            document.getElementById('results').innerHTML = '';
+            await test1();
+            await new Promise(r => setTimeout(r, 1000));
+            await test2();
+            await new Promise(r => setTimeout(r, 1000));
+            await test3();
+        }
+    </script>
+</body>
+</html>
