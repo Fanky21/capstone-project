@@ -23,6 +23,16 @@ public class NewsManager {
     private Random random;
     private int nextNewsId;
     
+    // Stock market related images from Unsplash
+    private static final String[] NEWS_IMAGES = {
+        "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800", // Stock charts
+        "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800", // Trading floor
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800", // Analytics
+        "https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=800", // Business meeting
+        "https://images.unsplash.com/photo-1535320903710-d993d3d77d29?w=800", // Stock market display
+        "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?w=800"  // Financial data
+    };
+    
     // Advanced smart news templates (like Flask news_generator.py)
     private static final String[][] NEWS_PATTERNS = {
         // Surge (>5%)
@@ -159,14 +169,22 @@ public class NewsManager {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
             String date = sdf.format(new Date());
             
+            // Generate content
+            String content = generateContent(companyName, ticker, change, currentPrice);
+            
+            // Create summary (first 100 chars of content)
+            String summary = content.length() > 100 ? content.substring(0, 100) + "..." : content;
+            
             // Create news object
             JSONObject newsItem = new JSONObject();
             newsItem.put("id", nextNewsId++);
             newsItem.put("title", title);
             newsItem.put("date", date);
             newsItem.put("category", "Market Analysis");
-            newsItem.put("content", generateContent(companyName, ticker, change, currentPrice));
+            newsItem.put("content", content);
+            newsItem.put("summary", summary); // Add summary field for frontend
             newsItem.put("impact", change > 0 ? "positive" : (change < -2 ? "negative" : "neutral"));
+            newsItem.put("image", NEWS_IMAGES[random.nextInt(NEWS_IMAGES.length)]); // Random stock market image
             
             // Move oldest active news to old news
             if (activeNews.length() >= 10) {

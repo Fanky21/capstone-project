@@ -74,6 +74,12 @@ async function loadNews() {
     try {
         const response = await fetch(`${API_BASE}/api/news`);
         news = await response.json();
+        console.log('News loaded:', news.length, 'articles');
+        console.log('First news item:', news[0]);
+        if (news[0]) {
+            console.log('Has image?', !!news[0].image, news[0].image);
+            console.log('Has summary?', !!news[0].summary, news[0].summary);
+        }
     } catch (error) {
         console.error('Error loading news:', error);
     }
@@ -100,13 +106,11 @@ async function loadPortfolio() {
 
 async function updatePrices() {
     try {
-        const response = await fetch(`${API_BASE}/api/update-prices`, {
-            method: 'POST'
-        });
+        // Just fetch latest data (background thread already updates prices)
+        const response = await fetch(`${API_BASE}/api/companies`);
         const result = await response.json();
-        if (result.success) {
-            companies = result.companies;
-        }
+        companies = result;
+        console.log('Prices refreshed - ' + companies.length + ' companies');
     } catch (error) {
         console.error('Error updating prices:', error);
     }
@@ -138,11 +142,11 @@ function renderNews() {
         featuredArticle.onclick = () => openArticleModal(featured);
         
         featuredArticle.innerHTML = `
-            <div class="featured-image" style="background-image: url('${featured.image}')"></div>
+            <div class="featured-image" style="background-image: url('${featured.image || 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800'}')"></div>
             <div class="featured-content">
                 <span class="news-category ${featured.category.toLowerCase().replace(/\s/g, '-')}">${featured.category}</span>
                 <h2 class="news-title">${featured.title}</h2>
-                <p class="news-summary">${featured.summary}</p>
+                <p class="news-summary">${featured.summary || featured.content || 'No summary available'}</p>
                 <div class="news-meta">
                     <span class="news-date">${featured.date}</span>
                 </div>
@@ -164,11 +168,11 @@ function renderNews() {
         card.onclick = () => openArticleModal(article);
         
         card.innerHTML = `
-            <div class="news-image" style="background-image: url('${article.image}')"></div>
+            <div class="news-image" style="background-image: url('${article.image || 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800'}')"></div>
             <div class="news-card-content">
                 <span class="news-category ${article.category.toLowerCase().replace(/\s/g, '-')}">${article.category}</span>
                 <h3 class="news-card-title">${article.title}</h3>
-                <p class="news-card-summary">${article.summary}</p>
+                <p class="news-card-summary">${article.summary || article.content || 'No summary available'}</p>
                 <span class="news-date">${article.date}</span>
             </div>
         `;
@@ -207,11 +211,11 @@ function renderNews() {
             card.onclick = () => openArticleModal(article);
             
             card.innerHTML = `
-                <div class="news-image" style="background-image: url('${article.image}')"></div>
+                <div class="news-image" style="background-image: url('${article.image || 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800'}')"></div>
                 <div class="news-card-content">
                     <span class="news-category ${article.category.toLowerCase().replace(/\s/g, '-')}">${article.category}</span>
                     <h3 class="news-card-title">${article.title}</h3>
-                    <p class="news-card-summary">${article.summary}</p>
+                    <p class="news-card-summary">${article.summary || article.content || 'No summary available'}</p>
                     <span class="news-date">${article.date}</span>
                 </div>
             `;

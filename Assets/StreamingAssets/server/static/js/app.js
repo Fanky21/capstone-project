@@ -53,6 +53,7 @@ function showAlert(message, type = 'warning') {
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log('🚀 App starting...');
     await loadCompanies();
     await loadPortfolio();
     setupEventListeners();
@@ -62,7 +63,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderMarketView();
     }
     
-    startPriceUpdates();
+    // Wait 5 seconds for background thread to do initial update
+    console.log('⏳ Waiting 5 seconds for initial price update...');
+    setTimeout(async () => {
+        console.log('🔄 Fetching prices after initial wait...');
+        await loadCompanies(); // Reload to get updated prices
+        renderMarketView();
+        startPriceUpdates(); // Start polling after initial update
+    }, 5000);
 });
 
 // API calls
@@ -71,7 +79,13 @@ async function loadCompanies() {
         console.log('Loading companies...');
         const response = await fetch(`${API_BASE}/api/companies`);
         companies = await response.json();
-        console.log(`Loaded ${companies.length} companies`);
+        console.log(`✓ Loaded ${companies.length} companies`);
+        
+        // Debug: Log first company's price
+        if (companies.length > 0) {
+            const first = companies[0];
+            console.log(`  First: ${first.ticker} Price=${first.currentPrice} Prev=${first.previousPrice} Change=${first.changePercent}%`);
+        }
     } catch (error) {
         console.error('Error loading companies:', error);
     }
@@ -117,14 +131,19 @@ async function executeTrade(action, ticker, shares) {
 
 async function updatePrices() {
     try {
-        const response = await fetch(`${API_BASE}/api/update-prices`, {
-            method: 'POST'
-        });
+        // Just fetch latest data (background thread already updates prices)
+        const response = await fetch(`${API_BASE}/api/companies`);
         const result = await response.json();
-        if (result.success) {
-            companies = result.companies;
-            console.log('Prices updated successfully - ' + companies.length + ' companies');
+        companies = result;
+        console.log('🔄 Prices refreshed - ' + companies.length + ' companies');
+        
+        // Debug: Log first company's price change
+        if (companies.length > 0) {
+            const first = companies[0];
+            console.log(`  ${first.ticker}: ${first.currentPrice} (${first.changePercent > 0 ? '+' : ''}${first.changePercent.toFixed(2)}%)`);
         }
+        
+        updateTicker(); // Update ticker display
     } catch (error) {
         console.error('Error updating prices:', error);
     }

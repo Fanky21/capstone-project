@@ -139,6 +139,24 @@ public class TradingServer extends NanoHTTPD {
             // Get all companies
             if (uri.equals("/api/companies")) {
                 JSONArray companies = companyDataManager.getAllCompanies();
+                
+                // Debug: log first company's change value
+                if (companies.length() > 0) {
+                    try {
+                        JSONObject first = companies.getJSONObject(0);
+                        android.util.Log.i("TradingServer", String.format(
+                            "/api/companies returning: %s currentPrice=%.2f, previousPrice=%.2f, change=%.2f, changePercent=%.2f",
+                            first.getString("ticker"),
+                            first.getDouble("currentPrice"),
+                            first.getDouble("previousPrice"),
+                            first.getDouble("change"),
+                            first.getDouble("changePercent")
+                        ));
+                    } catch (Exception e) {
+                        android.util.Log.e("TradingServer", "Error logging company data", e);
+                    }
+                }
+                
                 return createJsonResponse(companies);
             }
             
