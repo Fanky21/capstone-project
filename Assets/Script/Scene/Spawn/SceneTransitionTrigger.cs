@@ -50,7 +50,7 @@ public class SceneTransitionTrigger : MonoBehaviour
             {
                 stayTime += Time.deltaTime;
 
-                if (stayTime >= 2f)
+                if (stayTime >= 0.3f)
                 {
                     if (mapMovementAnimation != null)
                     {
@@ -61,7 +61,7 @@ public class SceneTransitionTrigger : MonoBehaviour
                         Debug.LogWarning("MapMovementAnimation not found in scene!");
                     }
 
-                    if (stayTime >= 1f)
+                    if (stayTime >= 0.3f)
                     {
                         MoveScene();
                         playerInside = false; // Prevent re-triggering

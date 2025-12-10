@@ -66,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -4314466627564281736, guid: 34b1ab8cd4d1fc14abc0c1c1d91e2638, type: 3}
+  m_Sprite: {fileID: 5178945795343844351, guid: 34b1ab8cd4d1fc14abc0c1c1d91e2638, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2306,7 +2306,6 @@ MonoBehaviour:
   investButton: {fileID: 175100701905263401}
   cryptoPanel: {fileID: 4630140935278851894}
   sahamPanel: {fileID: 1933915402036765578}
-  beritaButton: {fileID: 0}
   pauseButton: {fileID: 0}
 --- !u!1 &6188157487364265170
 GameObject:
