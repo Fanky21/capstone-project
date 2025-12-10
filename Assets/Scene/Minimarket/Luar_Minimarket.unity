@@ -2220,8 +2220,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c467acf08f492840831141890dc1587, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minRequestInterval: 0.1
-  maxRequestInterval: 0.2
+  minRequestInterval: 5
+  maxRequestInterval: 7
   moneyAmount: 20000
   characterName: Ibu
   dialogueLines:
