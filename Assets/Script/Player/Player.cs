@@ -30,8 +30,7 @@ public class Player : MonoBehaviour
         }
         set
         {
-            // This is a read-only property from InitFlask
-            // Money updates should be done through InitFlask methods
+
         }
     } 
 
@@ -66,7 +65,7 @@ public class Player : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(5f); // Tunggu 5 detik
+            yield return new WaitForSeconds(10f); // Tunggu 5 detik
 
             if (currentHealth > 0)
             {
@@ -152,13 +151,57 @@ public class Player : MonoBehaviour
 
     private void GameOver()
     {
-        Debug.Log("Game Over - Kembali ke Main Menu");
+        Debug.Log("Player Mati! Menampilkan panel respawn...");
         
-        // Save current scene before going to main menu
-        PlayerPrefs.SetInt("SavedScene", SceneManager.GetActiveScene().buildIndex);
-        PlayerPrefs.Save();
+        // Reset health dan stamina
+        currentHealth = maxHealth;
+        currentStamina = maxStamina;
+        SavePlayerData();
         
-        // Load main menu (scene index 0)
-        SceneManager.LoadScene(0);
+        // Load scene Rumah_Sakit terlebih dahulu
+        if (SceneController.instance != null)
+        {
+            SceneController.instance.LoadScene("Rumah_Sakit", "");
+        }
+        else
+        {
+            SceneManager.LoadScene("Rumah_Sakit");
+        }
+        
+        // Call show respawn panel setelah frame berikutnya (tunggu scene loaded)
+        StartCoroutine(ShowRespawnPanelDelayed());
+    }
+
+    private System.Collections.IEnumerator ShowRespawnPanelDelayed()
+    {
+        yield return new WaitForSeconds(1f);
+        
+        // Find RespawnPanel dynamically
+        GameObject respawnPanelGO = GameObject.Find("RespawnPanelManager");
+        if (respawnPanelGO != null)
+        {
+            var respawnPanelComponent = respawnPanelGO.GetComponent("RespawnPanel");
+            if (respawnPanelComponent != null)
+            {
+                System.Reflection.MethodInfo method = respawnPanelComponent.GetType().GetMethod("ShowRespawnPanel");
+                if (method != null)
+                {
+                    method.Invoke(respawnPanelComponent, null);
+                    Debug.Log("RespawnPanel ditampilkan!");
+                    yield break;
+                }
+            }
+        }
+        
+        Debug.LogError("RespawnPanel (RespawnPanelManager) tidak ditemukan di scene!");
+    }
+
+    /// <summary>
+    /// Reset respawn point setelah player memilih untuk respawn
+    /// </summary>
+    public void ResetRespawnState()
+    {
+        // Called setelah player berhasil membayar untuk respawn
+        Debug.Log("Player respawn state direset");
     }
 }

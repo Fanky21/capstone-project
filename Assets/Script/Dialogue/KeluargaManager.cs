@@ -41,7 +41,8 @@ public class KeluargaManager : MonoBehaviour
             SetupDefaultDialogues();
         }
 
-        ScheduleNextRequest();
+        // Load saved request data
+        LoadRequestData();
     }
 
     private void Update()
@@ -57,6 +58,9 @@ public class KeluargaManager : MonoBehaviour
         float randomInterval = Random.Range(minRequestInterval * 60f, maxRequestInterval * 60f); // Convert to seconds
         nextRequestTime = Time.time + randomInterval;
         canMakeRequest = true;
+        
+        // Save request data to PlayerPrefs
+        SaveRequestData();
     }
 
     public void MakeMoneyRequest()
@@ -254,5 +258,40 @@ public class KeluargaManager : MonoBehaviour
             line = "Bisakah kamu memberikannya?"
         };
         dialogueLines.Add(line2);
+    }
+
+    /// <summary>
+    /// Simpan data request ke PlayerPrefs agar tetap konsisten antar scene
+    /// </summary>
+    private void SaveRequestData()
+    {
+        PlayerPrefs.SetFloat("NextRequestTime", nextRequestTime);
+        PlayerPrefs.SetInt("CanMakeRequest", canMakeRequest ? 1 : 0);
+        PlayerPrefs.SetInt("Multiplier", multiplier);
+        PlayerPrefs.SetInt("TotalDebt", totalDebt);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>
+    /// Load data request dari PlayerPrefs
+    /// </summary>
+    private void LoadRequestData()
+    {
+        nextRequestTime = PlayerPrefs.GetFloat("NextRequestTime", Time.time + minRequestInterval * 60f);
+        canMakeRequest = PlayerPrefs.GetInt("CanMakeRequest", 1) == 1;
+        multiplier = PlayerPrefs.GetInt("Multiplier", 1);
+        totalDebt = PlayerPrefs.GetInt("TotalDebt", 0);
+
+        // Jika nextRequestTime sudah lewat, buat request baru
+        if (Time.time >= nextRequestTime && canMakeRequest)
+        {
+            MakeMoneyRequest();
+        }
+    }
+
+    private void OnDisable()
+    {
+        // Save data when scene changes or object is destroyed
+        SaveRequestData();
     }
 }

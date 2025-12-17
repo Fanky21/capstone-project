@@ -60,6 +60,10 @@ public class MainMenu : MonoBehaviour
     {
         // Reset player stats sebelum memulai game baru
         ResetPlayerStats();
+        
+        // Reset PanelScene state agar panel muncul lagi di scene
+        PanelScene.ResetPanelState();
+        
         SaveCurrentScene(1);
         SceneManager.LoadScene(1);
     }

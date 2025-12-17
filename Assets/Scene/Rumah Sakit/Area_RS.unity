@@ -10537,13 +10537,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1249360758}
-  m_LocalRotation: {x: -0, y: -0, z: 1, w: -0.0000002533197}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.018398097, y: 0.018398097, z: 0.018398097}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 486370755}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -917.03217, y: -600.97363}
@@ -12641,6 +12641,7 @@ MonoBehaviour:
   fullDayDuration: 120
   sunlight: {fileID: 1005703701}
   spotlightGroup: {fileID: 81407536}
+  kunangObject: {fileID: 0}
   transitionDuration: 3
 --- !u!4 &1932491304
 Transform:
