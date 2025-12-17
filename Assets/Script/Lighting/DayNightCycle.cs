@@ -13,6 +13,7 @@ public class DayNightCycle : MonoBehaviour
     [Header("Lighting")]
     public Light2D sunlight;
     public Transform spotlightGroup;
+    public GameObject kunangObject;
 
     [Header("Transition")]
     public float transitionDuration = 3f;
@@ -131,6 +132,10 @@ public class DayNightCycle : MonoBehaviour
         var lights = spotlightGroup.GetComponentsInChildren<Light2D>(true);
         foreach (var l in lights)
             l.enabled = !isDay;
+
+        // Set kunangObject inactive during day, active during night
+        if (kunangObject != null)
+            kunangObject.SetActive(!isDay);
     }
 
     private void OnDisable()

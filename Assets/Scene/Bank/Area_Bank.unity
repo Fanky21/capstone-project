@@ -2971,7 +2971,7 @@ GameObject:
   m_Component:
   - component: {fileID: 726893917}
   - component: {fileID: 726893919}
-  - component: {fileID: 726893918}
+  - component: {fileID: 726893920}
   m_Layer: 0
   m_Name: Scene
   m_TagString: Untagged
@@ -2994,19 +2994,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1946455761}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &726893918
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 726893916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaa659782e8a4b40ab52ba29371aad0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sceneTargetName: To_Taman_Bank
 --- !u!61 &726893919
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3053,6 +3040,20 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &726893920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 726893916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e625e560a04cc74daaddf110bacd6f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetSceneName: Luar_Taman
+  targetSpawnPointId: To_Taman_Bank
 --- !u!1 &733086010
 GameObject:
   m_ObjectHideFlags: 0
@@ -3166,7 +3167,7 @@ Transform:
   m_GameObject: {fileID: 740879690}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0012535604, y: 0.8458608, z: -10}
+  m_LocalPosition: {x: 0.54, y: 1.49, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5603,7 +5604,7 @@ Transform:
   m_GameObject: {fileID: 1699419855}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0.54, y: 1.49, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5737,11 +5738,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3134650701236030810, guid: 516ce97d214501b4ab035d08581cd745, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.54
       objectReference: {fileID: 0}
     - target: {fileID: 3134650701236030810, guid: 516ce97d214501b4ab035d08581cd745, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.49
       objectReference: {fileID: 0}
     - target: {fileID: 3134650701236030810, guid: 516ce97d214501b4ab035d08581cd745, type: 3}
       propertyPath: m_LocalPosition.z

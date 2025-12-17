@@ -7,7 +7,6 @@ public class InvestPanel : MonoBehaviour
     [SerializeField] private GameObject investButton;
 
     [Header("Sub Panels")]
-    [SerializeField] private GameObject cryptoPanel;
     [SerializeField] private GameObject sahamPanel;
     [Header("Button Berita")]
     [SerializeField] private GameObject pauseButton;
@@ -31,7 +30,6 @@ public class InvestPanel : MonoBehaviour
         investButton.SetActive(false);
         pauseButton.SetActive(false);
 
-        cryptoPanel.SetActive(true);
         sahamPanel.SetActive(false);
 
         Time.timeScale = 0f; // pause game
@@ -40,7 +38,6 @@ public class InvestPanel : MonoBehaviour
     public void OpenCryptoPanel()
     {
         PlayButtonSound();
-        cryptoPanel.SetActive(true);
         sahamPanel.SetActive(false);
     }
 
@@ -48,7 +45,6 @@ public class InvestPanel : MonoBehaviour
     {
         PlayButtonSound();
         sahamPanel.SetActive(true);
-        cryptoPanel.SetActive(false);
     }
 
     public void ExitPanel()
@@ -60,7 +56,6 @@ public class InvestPanel : MonoBehaviour
         investButton.SetActive(true);
         pauseButton.SetActive(true);
 
-        cryptoPanel.SetActive(false);
         sahamPanel.SetActive(false);
 
         Time.timeScale = 1f; // resume game
