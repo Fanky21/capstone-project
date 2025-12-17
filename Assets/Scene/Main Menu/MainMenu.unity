@@ -2440,7 +2440,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2395909428313259340, guid: 5364485ef84829645a8cb08ec2c0f140, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2593695256442220468, guid: 5364485ef84829645a8cb08ec2c0f140, type: 3}
       propertyPath: m_AdditionalShaderChannelsFlag
@@ -2448,7 +2448,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2963125004962604305, guid: 5364485ef84829645a8cb08ec2c0f140, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2987120719501490694, guid: 5364485ef84829645a8cb08ec2c0f140, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -2460,7 +2460,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3568150027022526948, guid: 5364485ef84829645a8cb08ec2c0f140, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4481602187992909650, guid: 5364485ef84829645a8cb08ec2c0f140, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -3526,6 +3526,18 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1800066277}
+        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -6565,6 +6577,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1800066279}
   - component: {fileID: 1800066278}
+  - component: {fileID: 1800066280}
   m_Layer: 0
   m_Name: MainServer
   m_TagString: Untagged
@@ -6584,12 +6597,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa02bee7bb9517b40be8a665ceb04718, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serverPort: 5000
+  tradingPort: 5000
+  bankPort: 5001
   autoStart: 1
   serverPath: LocalServer
   javaPath: java
   isServerRunning: 0
   serverStatus: Not Started
+  tradingUrl: 
+  bankUrl: 
 --- !u!4 &1800066279
 Transform:
   m_ObjectHideFlags: 0
@@ -6605,6 +6621,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1800066280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1800066277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68b57486127ec30418383d39f90b8633, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1801579562
 GameObject:
   m_ObjectHideFlags: 0
@@ -8047,3 +8075,4 @@ SceneRoots:
   - {fileID: 1486626128}
   - {fileID: 581388184}
   - {fileID: 1800066279}
+  - {fileID: 698128575}

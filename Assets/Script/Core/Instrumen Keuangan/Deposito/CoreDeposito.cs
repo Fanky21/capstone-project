@@ -126,8 +126,6 @@ public class CoreDeposito : MonoBehaviour
         if (depositoCoreObject.depositoCoreObjectHistory == null || depositoCoreObject.depositoCoreObjectHistory.Length == 0)
             return;
 
-        bool hasChanges = false;
-
         for (int i = 0; i < depositoCoreObject.depositoCoreObjectHistory.Length; i++)
         {
             DepositoCoreObjectHistory deposito = depositoCoreObject.depositoCoreObjectHistory[i];
@@ -142,7 +140,6 @@ public class CoreDeposito : MonoBehaviour
             if (deposito.timeRemainingInHours <= 0)
             {
                 CompleteDeposito(deposito);
-                hasChanges = true;
             }
         }
     }

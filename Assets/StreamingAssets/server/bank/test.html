@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bank Compunders - Server Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #2563eb; }
+        .success { color: #10b981; }
+        .error { color: #ef4444; }
+        button {
+            padding: 10px 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover { background: #1e40af; }
+        #result { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="test-box">
+        <h1>🏦 Bank Compunders Test Page</h1>
+        <p>If you can see this, the Bank Compunders Server is serving HTML files correctly!</p>
+        <p><strong>Server:</strong> Port 5001</p>
+        <p><strong>Status:</strong> <span class="success">✅ Working!</span></p>
+    </div>
+
+    <div class="test-box">
+        <h2>API Test</h2>
+        <button onclick="testBalance()">Test Balance API</button>
+        <button onclick="testDeposits()">Test Deposits API</button>
+        <button onclick="testLoans()">Test Loans API</button>
+        <div id="result"></div>
+    </div>
+
+    <div class="test-box">
+        <h2>Quick Links</h2>
+        <p><a href="/">Bank Home</a> | <a href="/api/balance">Balance API</a> | <a href="/api/deposits">Deposits API</a> | <a href="/api/loans">Loans API</a></p>
+    </div>
+
+    <script>
+        const resultDiv = document.getElementById('result');
+
+        async function testBalance() {
+            try {
+                resultDiv.innerHTML = '<p>Testing /api/balance...</p>';
+                const response = await fetch('/api/balance');
+                const data = await response.json();
+                resultDiv.innerHTML = `<p class="success">✅ Balance API Works!</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+
+        async function testDeposits() {
+            try {
+                resultDiv.innerHTML = '<p>Testing /api/deposits...</p>';
+                const response = await fetch('/api/deposits');
+                const data = await response.json();
+                resultDiv.innerHTML = `<p class="success">✅ Deposits API Works!</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+
+        async function testLoans() {
+            try {
+                resultDiv.innerHTML = '<p>Testing /api/loans...</p>';
+                const response = await fetch('/api/loans');
+                const data = await response.json();
+                resultDiv.innerHTML = `<p class="success">✅ Loans API Works!</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+
+        // Auto-test balance on load
+        window.addEventListener('load', () => {
+            setTimeout(testBalance, 500);
+        });
+    </script>
+</body>
+</html>

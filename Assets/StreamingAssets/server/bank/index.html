@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Compunders - Deposito & Peminjaman</title>
+    <link rel="stylesheet" href="/static/css/bank.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="brand">
+                    <h1>🏦 Bank Compunders</h1>
+                    <p class="tagline">Kelola Deposito & Pinjaman Anda</p>
+                </div>
+                <div class="balance-display">
+                    <span class="balance-label">Saldo Anda</span>
+                    <span class="balance-amount" id="balanceAmount">Rp 0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <div class="tabs">
+            <button class="tab-button active" data-tab="deposit">
+                💰 Deposito
+            </button>
+            <button class="tab-button" data-tab="loan">
+                💳 Peminjaman
+            </button>
+        </div>
+
+        <!-- Deposit Tab -->
+        <div class="tab-content active" id="depositTab">
+            <div class="section-header">
+                <h2>Deposito Berjangka</h2>
+                <p class="subtitle">Bunga 6% per tahun • Tenor 1-30 hari</p>
+            </div>
+
+            <!-- Create Deposit Form -->
+            <div class="card">
+                <h3>Buat Deposito Baru</h3>
+                <form id="depositForm">
+                    <div class="form-group">
+                        <label for="depositAmount">Jumlah Deposito</label>
+                        <input type="number" id="depositAmount" placeholder="Masukkan jumlah" min="10000" step="10000" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="depositDays">Tenor (Hari)</label>
+                        <input type="range" id="depositDays" min="1" max="30" value="7">
+                        <div class="range-value">
+                            <span id="daysDisplay">7</span> hari
+                        </div>
+                    </div>
+                    <div class="deposit-preview" id="depositPreview">
+                        <div class="preview-row">
+                            <span>Pokok:</span>
+                            <span id="previewPrincipal">Rp 0</span>
+                        </div>
+                        <div class="preview-row">
+                            <span>Bunga (6%):</span>
+                            <span id="previewInterest">Rp 0</span>
+                        </div>
+                        <div class="preview-row total">
+                            <span>Total Kembali:</span>
+                            <span id="previewTotal">Rp 0</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Buat Deposito</button>
+                </form>
+            </div>
+
+            <!-- Active Deposits List -->
+            <div class="card">
+                <h3>Deposito Aktif</h3>
+                <div id="depositsList" class="items-list">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Loan Tab -->
+        <div class="tab-content" id="loanTab">
+            <div class="section-header">
+                <h2>Peminjaman</h2>
+                <p class="subtitle">Pinjaman Rp 100.000 • Tenor 30 hari • Bunga 20%</p>
+            </div>
+
+            <!-- Create Loan -->
+            <div class="card">
+                <h3>Ajukan Pinjaman</h3>
+                <div class="loan-info">
+                    <div class="info-row">
+                        <span>Jumlah Pinjaman:</span>
+                        <strong>Rp 100.000</strong>
+                    </div>
+                    <div class="info-row">
+                        <span>Tenor:</span>
+                        <strong>30 hari</strong>
+                    </div>
+                    <div class="info-row">
+                        <span>Bunga:</span>
+                        <strong>20%</strong>
+                    </div>
+                    <div class="info-row total">
+                        <span>Total Pengembalian:</span>
+                        <strong>Rp 120.000</strong>
+                    </div>
+                </div>
+                <div class="loan-warning">
+                    ⚠️ Setelah 30 hari, uang akan otomatis dipotong dari saldo Anda
+                </div>
+                <button id="createLoanBtn" class="btn btn-primary">Ajukan Pinjaman</button>
+            </div>
+
+            <!-- Active Loans List -->
+            <div class="card">
+                <h3>Pinjaman Aktif</h3>
+                <div id="loansList" class="items-list">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Stats -->
+        <footer class="footer">
+            <div class="stats" id="statsDisplay">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </footer>
+    </div>
+
+    <script src="/static/js/bank.js"></script>
+</body>
+</html>

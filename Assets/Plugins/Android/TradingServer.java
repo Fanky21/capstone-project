@@ -39,6 +39,20 @@ public class TradingServer extends NanoHTTPD {
     }
     
     /**
+     * Constructor with shared MoneyManager (for use with BankServer)
+     */
+    public TradingServer(Context context, String streamingAssetsPath, MoneyManager sharedMoneyManager) throws IOException {
+        super(PORT);
+        this.context = context;
+        
+        this.moneyManager = sharedMoneyManager; // Use shared instance
+        this.companyDataManager = new CompanyDataManager(context);
+        this.newsManager = new NewsManager(context);
+        
+        android.util.Log.i("TradingServer", "Trading Server initialized with shared MoneyManager");
+    }
+    
+    /**
      * Start the server and background tasks (Flask-style)
      */
     public void startServer() throws IOException {

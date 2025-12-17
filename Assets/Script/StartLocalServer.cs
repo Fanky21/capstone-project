@@ -6,9 +6,10 @@ using UnityEngine.Networking;
 using System.Collections;
 
 /// <summary>
-/// Start and manage the Local Trading Server
+/// Start and manage Local Trading Server (5000) and Bank Server (5001)
 /// PC/Editor: Uses Java HttpServer process
 /// Android: Uses NanoHTTPD embedded in APK
+/// Both servers share the same balance (MoneyManager)
 /// </summary>
 public class StartLocalServer : MonoBehaviour
 {
@@ -16,8 +17,11 @@ public class StartLocalServer : MonoBehaviour
     private static StartLocalServer instance;
     
     [Header("Server Configuration")]
-    [Tooltip("Port number for the local server")]
-    public int serverPort = 5000;
+    [Tooltip("Port number for trading server")]
+    public int tradingPort = 5000;
+    
+    [Tooltip("Port number for bank server")]
+    public int bankPort = 5001;
     
     [Tooltip("Automatically start server on awake")]
     public bool autoStart = true;
@@ -31,10 +35,11 @@ public class StartLocalServer : MonoBehaviour
     [Header("Server Status")]
     [SerializeField] private bool isServerRunning = false;
     [SerializeField] private string serverStatus = "Not Started";
+    [SerializeField] private string tradingUrl = "";
+    [SerializeField] private string bankUrl = "";
     
     private Process serverProcess; // PC/Editor only
     private AndroidJavaClass androidServerBridge; // Android only
-    private string serverUrl;
     
     /// <summary>
     /// Get singleton instance
@@ -59,7 +64,8 @@ public class StartLocalServer : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         UnityEngine.Debug.Log("StartLocalServer set to DontDestroyOnLoad");
         
-        serverUrl = $"http://localhost:{serverPort}";
+        tradingUrl = $"http://localhost:{tradingPort}";
+        bankUrl = $"http://localhost:{bankPort}";
         
         if (autoStart)
         {
@@ -78,13 +84,14 @@ public class StartLocalServer : MonoBehaviour
     }
     
     /// <summary>
-    /// Start the server (Android or PC/Editor)
+    /// Start both servers: Trading (5000) and Bank (5001)
+    /// Android: Both servers share same MoneyManager instance
     /// </summary>
     public void StartServer()
     {
         if (isServerRunning)
         {
-            UnityEngine.Debug.LogWarning("Server is already running!");
+            UnityEngine.Debug.LogWarning("Servers are already running!");
             return;
         }
         
@@ -116,16 +123,19 @@ public class StartLocalServer : MonoBehaviour
             {
                 isServerRunning = true;
                 serverStatus = "Starting...";
-                UnityEngine.Debug.Log("Android Trading Server starting on port " + serverPort);
+                UnityEngine.Debug.Log("✅ Android Trading Server starting on port " + tradingPort);
+                UnityEngine.Debug.Log("✅ Android Bank Server starting on port " + bankPort);
                 UnityEngine.Debug.Log("StreamingAssets path: " + streamingAssetsPath);
+                UnityEngine.Debug.Log("Trading URL: " + tradingUrl);
+                UnityEngine.Debug.Log("Bank URL: " + bankUrl);
                 
-                // Check server health
+                // Check both servers health
                 StartCoroutine(CheckServerHealth());
             }
             else
             {
                 serverStatus = "Failed to start";
-                UnityEngine.Debug.LogError("Failed to start Android server");
+                UnityEngine.Debug.LogError("Failed to start Android servers");
             }
         }
         catch (Exception e)
@@ -202,9 +212,10 @@ public class StartLocalServer : MonoBehaviour
             isServerRunning = true;
             serverStatus = "Starting...";
             
-            UnityEngine.Debug.Log($"Local Trading Server starting on port {serverPort}...");
+            UnityEngine.Debug.Log($"Local Trading Server starting on port {tradingPort}...");
+            UnityEngine.Debug.Log($"Local Bank Server starting on port {bankPort}...");
             
-            // Check server health
+            // Check both servers health
             StartCoroutine(CheckServerHealth());
         }
         catch (Exception e)
@@ -245,7 +256,7 @@ public class StartLocalServer : MonoBehaviour
             isServerRunning = false;
             serverStatus = "Stopped";
             
-            UnityEngine.Debug.Log("Android Trading Server stopped");
+            UnityEngine.Debug.Log("Android Trading & Bank Servers stopped");
         }
         catch (Exception e)
         {
@@ -277,7 +288,7 @@ public class StartLocalServer : MonoBehaviour
             isServerRunning = false;
             serverStatus = "Stopped";
             
-            UnityEngine.Debug.Log("Local Trading Server stopped");
+            UnityEngine.Debug.Log("Local Trading & Bank Servers stopped");
         }
         catch (Exception e)
         {
@@ -295,34 +306,76 @@ public class StartLocalServer : MonoBehaviour
     }
     
     /// <summary>
-    /// Check if server is running and healthy
+    /// Check if both servers are running and healthy
     /// </summary>
     private IEnumerator CheckServerHealth()
     {
-        // Wait a bit for server to start
+        // Wait a bit for servers to start
         yield return new WaitForSeconds(2f);
         
-        string healthUrl = $"{serverUrl}/api/unity/health";
+        bool tradingOk = false;
+        bool bankOk = false;
         
-        using (UnityWebRequest request = UnityWebRequest.Get(healthUrl))
+        // Check Trading Server (5000)
+        string tradingHealthUrl = $"{tradingUrl}/api/unity/health";
+        using (UnityWebRequest request = UnityWebRequest.Get(tradingHealthUrl))
         {
             yield return request.SendWebRequest();
             
             if (request.result == UnityWebRequest.Result.Success)
             {
-                serverStatus = "Running";
-                UnityEngine.Debug.Log($"Server is running at {serverUrl}");
-                UnityEngine.Debug.Log($"Server response: {request.downloadHandler.text}");
+                tradingOk = true;
+                UnityEngine.Debug.Log($"✅ Trading Server running at {tradingUrl}");
+                UnityEngine.Debug.Log($"Trading response: {request.downloadHandler.text}");
             }
             else
             {
-                serverStatus = "Error: Server not responding";
-                UnityEngine.Debug.LogWarning($"Server health check failed: {request.error}");
-                
-                // Retry after a delay
-                yield return new WaitForSeconds(3f);
-                StartCoroutine(CheckServerHealth());
+                UnityEngine.Debug.LogWarning($"⚠️ Trading Server health check failed: {request.error}");
             }
+        }
+        
+        // Check Bank Server (5001)
+        string bankHealthUrl = $"{bankUrl}/api/balance";
+        using (UnityWebRequest request = UnityWebRequest.Get(bankHealthUrl))
+        {
+            yield return request.SendWebRequest();
+            
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                bankOk = true;
+                UnityEngine.Debug.Log($"✅ Bank Server running at {bankUrl}");
+                UnityEngine.Debug.Log($"Bank response: {request.downloadHandler.text}");
+            }
+            else
+            {
+                UnityEngine.Debug.LogWarning($"⚠️ Bank Server health check failed: {request.error}");
+            }
+        }
+        
+        // Update status
+        if (tradingOk && bankOk)
+        {
+            serverStatus = "Both Running (5000 + 5001)";
+            UnityEngine.Debug.Log("✅ Both servers are healthy and running!");
+        }
+        else if (tradingOk)
+        {
+            serverStatus = "Trading Only (5000)";
+            UnityEngine.Debug.LogWarning("⚠️ Only Trading Server is running");
+        }
+        else if (bankOk)
+        {
+            serverStatus = "Bank Only (5001)";
+            UnityEngine.Debug.LogWarning("⚠️ Only Bank Server is running");
+        }
+        else
+        {
+            serverStatus = "Error: Servers not responding";
+            UnityEngine.Debug.LogError("❌ Both servers health check failed");
+            
+            // Retry after a delay
+            yield return new WaitForSeconds(3f);
+            StartCoroutine(CheckServerHealth());
         }
     }
     
@@ -353,11 +406,27 @@ public class StartLocalServer : MonoBehaviour
     }
     
     /// <summary>
-    /// Get server URL
+    /// Get trading server URL (port 5000)
+    /// </summary>
+    public string GetTradingUrl()
+    {
+        return tradingUrl;
+    }
+    
+    /// <summary>
+    /// Get bank server URL (port 5001)
+    /// </summary>
+    public string GetBankUrl()
+    {
+        return bankUrl;
+    }
+    
+    /// <summary>
+    /// Get server URL (legacy - returns trading URL)
     /// </summary>
     public string GetServerUrl()
     {
-        return serverUrl;
+        return tradingUrl;
     }
     
     /// <summary>
@@ -383,7 +452,7 @@ public class StartLocalServer : MonoBehaviour
     /// </summary>
     public IEnumerator CheckMoney(Action<bool, double> callback)
     {
-        string url = $"{serverUrl}/api/unity/money/check";
+        string url = $"{tradingUrl}/api/unity/money/check";
         
         using (UnityWebRequest request = UnityWebRequest.Get(url))
         {
@@ -416,7 +485,7 @@ public class StartLocalServer : MonoBehaviour
     /// </summary>
     public IEnumerator AddMoney(double amount, Action<bool, string> callback)
     {
-        string url = $"{serverUrl}/api/unity/money/add";
+        string url = $"{tradingUrl}/api/unity/money/add";
         
         MoneyRequest requestData = new MoneyRequest { amount = amount };
         string jsonData = JsonUtility.ToJson(requestData);
@@ -447,7 +516,7 @@ public class StartLocalServer : MonoBehaviour
     /// </summary>
     public IEnumerator SubtractMoney(double amount, Action<bool, string> callback)
     {
-        string url = $"{serverUrl}/api/unity/money/subtract";
+        string url = $"{tradingUrl}/api/unity/money/subtract";
         
         MoneyRequest requestData = new MoneyRequest { amount = amount };
         string jsonData = JsonUtility.ToJson(requestData);
@@ -478,7 +547,7 @@ public class StartLocalServer : MonoBehaviour
     /// </summary>
     public IEnumerator SetMoney(double amount, Action<bool, string> callback)
     {
-        string url = $"{serverUrl}/api/unity/money/set";
+        string url = $"{tradingUrl}/api/unity/money/set";
         
         MoneyRequest requestData = new MoneyRequest { amount = amount };
         string jsonData = JsonUtility.ToJson(requestData);
