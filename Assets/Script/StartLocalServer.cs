@@ -12,6 +12,9 @@ using System.Collections;
 /// </summary>
 public class StartLocalServer : MonoBehaviour
 {
+    // Singleton instance
+    private static StartLocalServer instance;
+    
     [Header("Server Configuration")]
     [Tooltip("Port number for the local server")]
     public int serverPort = 5000;
@@ -33,8 +36,29 @@ public class StartLocalServer : MonoBehaviour
     private AndroidJavaClass androidServerBridge; // Android only
     private string serverUrl;
     
+    /// <summary>
+    /// Get singleton instance
+    /// </summary>
+    public static StartLocalServer Instance
+    {
+        get { return instance; }
+    }
+    
     void Awake()
     {
+        // Implement singleton pattern with DontDestroyOnLoad
+        if (instance != null && instance != this)
+        {
+            // Instance already exists, destroy this duplicate
+            UnityEngine.Debug.LogWarning("Duplicate StartLocalServer detected. Destroying...");
+            Destroy(gameObject);
+            return;
+        }
+        
+        instance = this;
+        DontDestroyOnLoad(gameObject);
+        UnityEngine.Debug.Log("StartLocalServer set to DontDestroyOnLoad");
+        
         serverUrl = $"http://localhost:{serverPort}";
         
         if (autoStart)

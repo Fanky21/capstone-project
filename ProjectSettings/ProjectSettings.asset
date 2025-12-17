@@ -677,7 +677,8 @@ PlayerSettings:
   webGLWebAssemblyBigInt: 0
   webGLCloseOnQuit: 0
   webWasm2023: 0
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    Android: UNITYWEBVIEW_ANDROID_USES_CLEARTEXT_TRAFFIC
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
