@@ -1,165 +1,245 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class CoreDeposito : MonoBehaviour
 {
-    public MainCoreGame mainCoreGame;
+    [Header("Deposito Settings")]
     public DepositoCoreObject depositoCoreObject;
-    
-    void startDeposito(float ammount, int duration)
+    public float defaultInterestRate = 6f;
+
+    [Header("Time Reference")]
+    private float lastCheckedTime = 0f;
+    private float elapsedGameHours = 0f;
+
+    private void Update()
     {
-        // Cek apakah uang cukup
-        if (mainCoreGame.uang < ammount)
+        if (depositoCoreObject == null || DayNightCycle.Instance == null) return;
+
+        // Hitung berapa jam yang sudah berlalu di game world
+        float currentWorldTime = DayNightCycle.Instance.WorldTime; // dalam menit (0-1440)
+        float currentWorldTimeInHours = currentWorldTime / 60f; // konversi ke jam (0-24)
+
+        // Hitung delta time dalam jam game
+        // Karena WorldTime reset setiap 24 jam, kita perlu handle wrap-around
+        float deltaHours = 0f;
+        
+        if (lastCheckedTime == 0f)
         {
-            Debug.Log("Uang tidak cukup untuk deposito!");
+            lastCheckedTime = currentWorldTimeInHours;
             return;
         }
 
-        Debug.Log("Deposito dimulai dengan jumlah: " + ammount);
-        mainCoreGame.uang -= ammount;
-        Debug.Log("Sisa uang setelah deposito: " + mainCoreGame.uang);
-
-        // Buat data deposito baru
-        DepositoCoreObjectHistory newDeposito = new DepositoCoreObjectHistory();
-        newDeposito.depositoCode = generateDepositoCode();
-        newDeposito.depositoAmmount = ammount;
-        newDeposito.depositoDuration = duration;
-        newDeposito.depositoStartDate = mainCoreGame.tanggal;
-        newDeposito.depositoEndDate = mainCoreGame.tanggal.AddMonths(duration);
-
-        // Tambahkan ke array deposito
-        addDepositoToHistory(newDeposito);
-        
-        Debug.Log("Deposito berhasil dibuat dengan kode: " + newDeposito.depositoCode + 
-                  " | Berakhir pada: " + newDeposito.depositoEndDate.ToString("dd/MM/yyyy"));
-    }
-
-    float intrestRateCalculator(float ammount, int duration)
-    {
-        float interestRate = 0.06f; // Bunga deposito default annualy 6% per tahun.
-        float interestEarned = ammount * interestRate * (duration / 12.0f); // Menghitung bunga berdasarkan durasi dalam bulan.
-
-        Debug.Log("Bunga yang diperoleh setelah " + duration + " bulan: " + interestEarned);
-        float totalDepositoEarning = ammount + interestEarned;
-
-        Debug.Log("Total pendapatan deposito: " + totalDepositoEarning);
-
-        return totalDepositoEarning;
-    }
-
-    int generateDepositoCode()
-    {
-        // Generate kode deposito unik berdasarkan timestamp
-        return (int)(DateTime.Now.Ticks % int.MaxValue);
-    }
-
-    void addDepositoToHistory(DepositoCoreObjectHistory newDeposito)
-    {
-        if (depositoCoreObject.depositoCoreObjectHistory == null)
+        if (currentWorldTimeInHours >= lastCheckedTime)
         {
-            depositoCoreObject.depositoCoreObjectHistory = new DepositoCoreObjectHistory[1];
-            depositoCoreObject.depositoCoreObjectHistory[0] = newDeposito;
+            deltaHours = currentWorldTimeInHours - lastCheckedTime;
         }
         else
         {
-            // Expand array dan tambahkan deposito baru
-            DepositoCoreObjectHistory[] tempArray = new DepositoCoreObjectHistory[depositoCoreObject.depositoCoreObjectHistory.Length + 1];
-            for (int i = 0; i < depositoCoreObject.depositoCoreObjectHistory.Length; i++)
-            {
-                tempArray[i] = depositoCoreObject.depositoCoreObjectHistory[i];
-            }
-            tempArray[tempArray.Length - 1] = newDeposito;
-            depositoCoreObject.depositoCoreObjectHistory = tempArray;
+            // Wrap around terjadi (midnight)
+            deltaHours = (24f - lastCheckedTime) + currentWorldTimeInHours;
         }
+
+        lastCheckedTime = currentWorldTimeInHours;
+        elapsedGameHours += deltaHours;
+
+        // Update semua deposito aktif
+        UpdateActiveDepositos(deltaHours);
     }
 
-    void checkDepositoStatus()
+    /// <summary>
+    /// Memulai deposito baru
+    /// </summary>
+    /// <param name="amount">Jumlah uang yang didepositokan</param>
+    /// <param name="durationInDays">Durasi dalam hari (akan dikonversi ke jam)</param>
+    /// <param name="customInterestRate">Rate bunga kustom, jika -1 akan gunakan default</param>
+    public bool StartDeposito(float amount, int durationInDays, float customInterestRate = -1f)
     {
-        if (depositoCoreObject.depositoCoreObjectHistory == null) return;
+        if (depositoCoreObject == null)
+        {
+            Debug.LogError("DepositoCoreObject tidak di-assign!");
+            return false;
+        }
 
-        List<int> expiredIndices = new List<int>();
+        if (PlayerMoneyManager.Instance == null)
+        {
+            Debug.LogError("PlayerMoneyManager tidak ditemukan!");
+            return false;
+        }
 
-        // Cek setiap deposito apakah sudah expired
+        if (!PlayerMoneyManager.Instance.HasEnoughMoney((int)amount))
+        {
+            Debug.LogWarning($"Uang tidak cukup untuk deposito sebesar Rp{amount:N0}");
+            return false;
+        }
+
+        if (DayNightCycle.Instance == null)
+        {
+            Debug.LogError("DayNightCycle tidak ditemukan!");
+            return false;
+        }
+
+        // Ambil uang dari player
+        if (!PlayerMoneyManager.Instance.RemoveMoney((int)amount))
+        {
+            return false;
+        }
+
+        // Hitung durasi dalam jam (1 hari = 24 jam)
+        float durationInHours = durationInDays * 24f;
+
+        // Gunakan interest rate yang dipilih
+        float interestRate = customInterestRate > 0 ? customInterestRate : defaultInterestRate;
+
+        // Generate kode deposito unik
+        int newDepositoCode = GenerateDepositoCode();
+
+        // Buat history baru
+        DepositoCoreObjectHistory newDeposito = new DepositoCoreObjectHistory
+        {
+            depositoCode = newDepositoCode,
+            depositoAmount = amount,
+            depositoDurationInHours = durationInHours,
+            depositoInterestRate = interestRate,
+            startTimeInHours = elapsedGameHours,
+            timeRemainingInHours = durationInHours,
+            isActive = true,
+            isCompleted = false
+        };
+
+        // Tambahkan ke array
+        List<DepositoCoreObjectHistory> depositoList = new List<DepositoCoreObjectHistory>(depositoCoreObject.depositoCoreObjectHistory);
+        depositoList.Add(newDeposito);
+        depositoCoreObject.depositoCoreObjectHistory = depositoList.ToArray();
+
+        Debug.Log($"Deposito dimulai! Kode: {newDepositoCode}, Jumlah: Rp{amount:N0}, Durasi: {durationInDays} hari ({durationInHours} jam), Bunga: {interestRate}%");
+        
+        return true;
+    }
+
+    /// <summary>
+    /// Update semua deposito aktif, kurangi waktu dan cek jika ada yang jatuh tempo
+    /// </summary>
+    private void UpdateActiveDepositos(float deltaHours)
+    {
+        if (depositoCoreObject.depositoCoreObjectHistory == null || depositoCoreObject.depositoCoreObjectHistory.Length == 0)
+            return;
+
+        bool hasChanges = false;
+
         for (int i = 0; i < depositoCoreObject.depositoCoreObjectHistory.Length; i++)
         {
             DepositoCoreObjectHistory deposito = depositoCoreObject.depositoCoreObjectHistory[i];
-            
-            // Bandingkan tanggal saat ini dengan tanggal berakhir deposito
-            if (mainCoreGame.tanggal.Date >= deposito.depositoEndDate.Date)
+
+            if (!deposito.isActive || deposito.isCompleted)
+                continue;
+
+            // Kurangi waktu tersisa
+            deposito.timeRemainingInHours -= deltaHours;
+
+            // Cek jika sudah jatuh tempo
+            if (deposito.timeRemainingInHours <= 0)
             {
-                // Deposito sudah expired, hitung total pendapatan
-                float totalEarning = intrestRateCalculator(deposito.depositoAmmount, deposito.depositoDuration);
-                
-                // Tambahkan ke uang player
-                mainCoreGame.uang += totalEarning;
-                
-                Debug.Log("Deposito dengan kode " + deposito.depositoCode + " telah berakhir!");
-                Debug.Log("Total pendapatan: " + totalEarning);
-                Debug.Log("Uang player sekarang: " + mainCoreGame.uang);
-                
-                // Tandai untuk dihapus
-                expiredIndices.Add(i);
+                CompleteDeposito(deposito);
+                hasChanges = true;
             }
         }
+    }
 
-        // Hapus deposito yang sudah expired (dari index tertinggi ke terendah)
-        for (int i = expiredIndices.Count - 1; i >= 0; i--)
+    /// <summary>
+    /// Menyelesaikan deposito dan mengembalikan uang + bunga
+    /// </summary>
+    private void CompleteDeposito(DepositoCoreObjectHistory deposito)
+    {
+        if (deposito.isCompleted)
+            return;
+
+        // Hitung total yang dikembalikan (pokok + bunga)
+        float interestAmount = deposito.depositoAmount * (deposito.depositoInterestRate / 100f);
+        float totalReturn = deposito.depositoAmount + interestAmount;
+
+        // Kembalikan uang ke player
+        if (PlayerMoneyManager.Instance != null)
         {
-            removeDepositoFromHistory(expiredIndices[i]);
+            PlayerMoneyManager.Instance.AddMoney((int)totalReturn);
+            Debug.Log($"Deposito #{deposito.depositoCode} selesai! Dikembalikan: Rp{totalReturn:N0} (Pokok: Rp{deposito.depositoAmount:N0} + Bunga: Rp{interestAmount:N0})");
         }
+
+        // Update status
+        deposito.isActive = false;
+        deposito.isCompleted = true;
+        deposito.timeRemainingInHours = 0f;
     }
 
-    void removeDepositoFromHistory(int index)
+    /// <summary>
+    /// Generate kode deposito unik
+    /// </summary>
+    private int GenerateDepositoCode()
     {
-        if (depositoCoreObject.depositoCoreObjectHistory == null || 
-            index < 0 || index >= depositoCoreObject.depositoCoreObjectHistory.Length) return;
-
-        // Buat array baru tanpa elemen yang dihapus
-        DepositoCoreObjectHistory[] newArray = new DepositoCoreObjectHistory[depositoCoreObject.depositoCoreObjectHistory.Length - 1];
-        
-        int newIndex = 0;
-        for (int i = 0; i < depositoCoreObject.depositoCoreObjectHistory.Length; i++)
+        if (depositoCoreObject.depositoCoreObjectHistory == null || depositoCoreObject.depositoCoreObjectHistory.Length == 0)
         {
-            if (i != index)
-            {
-                newArray[newIndex] = depositoCoreObject.depositoCoreObjectHistory[i];
-                newIndex++;
-            }
+            return 1001; // Kode awal
         }
-        
-        depositoCoreObject.depositoCoreObjectHistory = newArray;
-        Debug.Log("Deposito pada index " + index + " telah dihapus dari history.");
+
+        // Ambil kode tertinggi dan tambah 1
+        int maxCode = depositoCoreObject.depositoCoreObjectHistory.Max(d => d.depositoCode);
+        return maxCode + 1;
     }
 
-    void Update()
+    /// <summary>
+    /// Mendapatkan list deposito aktif
+    /// </summary>
+    public List<DepositoCoreObjectHistory> GetActiveDepositos()
     {
-        // Lakukan pengecekan deposito secara berkala
-        checkDepositoStatus();
+        if (depositoCoreObject == null || depositoCoreObject.depositoCoreObjectHistory == null)
+            return new List<DepositoCoreObjectHistory>();
+
+        return depositoCoreObject.depositoCoreObjectHistory
+            .Where(d => d.isActive && !d.isCompleted)
+            .ToList();
     }
 
-    // Method public untuk memulai deposito dari UI atau script lain
-    public void StartNewDeposito(float amount, int durationInMonths)
+    /// <summary>
+    /// Mendapatkan total uang yang sedang didepositokan
+    /// </summary>
+    public float GetTotalDepositedAmount()
     {
-        startDeposito(amount, durationInMonths);
+        return GetActiveDepositos().Sum(d => d.depositoAmount);
     }
 
-    // Method untuk mendapatkan informasi deposito aktif
-    public DepositoCoreObjectHistory[] GetActiveDepositos()
+    /// <summary>
+    /// Cancellation deposito sebelum jatuh tempo (opsional - dengan penalty)
+    /// </summary>
+    public bool CancelDeposito(int depositoCode, float penaltyPercent = 10f)
     {
-        return depositoCoreObject.depositoCoreObjectHistory;
-    }
+        if (depositoCoreObject == null || depositoCoreObject.depositoCoreObjectHistory == null)
+            return false;
 
-    // Method untuk mendapatkan total nilai deposito yang sedang berjalan
-    public float GetTotalDepositoValue()
-    {
-        if (depositoCoreObject.depositoCoreObjectHistory == null) return 0f;
+        DepositoCoreObjectHistory deposito = depositoCoreObject.depositoCoreObjectHistory
+            .FirstOrDefault(d => d.depositoCode == depositoCode && d.isActive && !d.isCompleted);
 
-        float total = 0f;
-        foreach (var deposito in depositoCoreObject.depositoCoreObjectHistory)
+        if (deposito == null)
         {
-            total += deposito.depositoAmmount;
+            Debug.LogWarning($"Deposito dengan kode {depositoCode} tidak ditemukan atau sudah tidak aktif");
+            return false;
         }
-        return total;
+
+        // Hitung jumlah yang dikembalikan dengan penalty
+        float penaltyAmount = deposito.depositoAmount * (penaltyPercent / 100f);
+        float returnAmount = deposito.depositoAmount - penaltyAmount;
+
+        // Kembalikan uang ke player
+        if (PlayerMoneyManager.Instance != null)
+        {
+            PlayerMoneyManager.Instance.AddMoney((int)returnAmount);
+            Debug.Log($"Deposito #{depositoCode} dibatalkan! Dikembalikan: Rp{returnAmount:N0} (Penalty: Rp{penaltyAmount:N0})");
+        }
+
+        // Update status
+        deposito.isActive = false;
+        deposito.isCompleted = true;
+
+        return true;
     }
 }
