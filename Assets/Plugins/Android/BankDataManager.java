@@ -24,6 +24,7 @@ public class BankDataManager {
     private static final double LOAN_AMOUNT = 100000.0;
     private static final int LOAN_DURATION_DAYS = 30;
     private static final double LOAN_INTEREST_RATE = 0.20; // 20%
+    private static final long SECONDS_PER_DAY = 120; // 1 game day = 120 real seconds (2 minutes)
     
     public BankDataManager(Context context, MoneyManager moneyManager) {
         this.context = context;
@@ -65,11 +66,9 @@ public class BankDataManager {
         // Deduct money
         moneyManager.subtractCash(amount);
         
-        // Calculate maturity
-        Calendar cal = Calendar.getInstance();
-        Date startDate = cal.getTime();
-        cal.add(Calendar.DATE, days);
-        Date maturityDate = cal.getTime();
+        // Calculate maturity using real-time seconds (120 seconds per game day)
+        long startTimestamp = System.currentTimeMillis();
+        long durationSeconds = days * SECONDS_PER_DAY;
         
         // Calculate interest (simple interest for days)
         double dailyRate = DEPOSIT_INTEREST_RATE / 365;
@@ -83,8 +82,8 @@ public class BankDataManager {
         deposit.days = days;
         deposit.interest = interest;
         deposit.totalReturn = totalReturn;
-        deposit.startDate = startDate;
-        deposit.maturityDate = maturityDate;
+        deposit.startTimestamp = startTimestamp;
+        deposit.durationSeconds = durationSeconds;
         deposit.status = "active";
         
         activeDeposits.add(deposit);
@@ -114,9 +113,11 @@ public class BankDataManager {
             return response;
         }
         
-        // Check if mature
-        Date now = new Date();
-        boolean isMature = now.compareTo(deposit.maturityDate) >= 0;
+        // Check if mature (based on elapsed real-time seconds)
+        long currentTimestamp = System.currentTimeMillis();
+        long elapsedMillis = currentTimestamp - deposit.startTimestamp;
+        long elapsedSeconds = elapsedMillis / 1000;
+        boolean isMature = elapsedSeconds >= deposit.durationSeconds;
         
         double returnAmount;
         if (isMature) {
@@ -159,11 +160,9 @@ public class BankDataManager {
             return response;
         }
         
-        // Calculate due date (30 days from now)
-        Calendar cal = Calendar.getInstance();
-        Date startDate = cal.getTime();
-        cal.add(Calendar.DATE, LOAN_DURATION_DAYS);
-        Date dueDate = cal.getTime();
+        // Calculate due date using real-time seconds (120 seconds per game day)
+        long startTimestamp = System.currentTimeMillis();
+        long durationSeconds = LOAN_DURATION_DAYS * SECONDS_PER_DAY;
         
         // Calculate repayment amount (principal + 20% interest)
         double repaymentAmount = LOAN_AMOUNT * (1 + LOAN_INTEREST_RATE);
@@ -174,8 +173,8 @@ public class BankDataManager {
         loan.amount = LOAN_AMOUNT;
         loan.interestRate = LOAN_INTEREST_RATE;
         loan.repaymentAmount = repaymentAmount;
-        loan.startDate = startDate;
-        loan.dueDate = dueDate;
+        loan.startTimestamp = startTimestamp;
+        loan.durationSeconds = durationSeconds;
         loan.status = "active";
         
         activeLoans.add(loan);
@@ -251,11 +250,14 @@ public class BankDataManager {
      * Check and auto-deduct overdue loans
      */
     private void checkOverdueLoans() {
-        Date now = new Date();
+        long currentTimestamp = System.currentTimeMillis();
         List<Loan> toRemove = new ArrayList<>();
         
         for (Loan loan : activeLoans) {
-            if (now.compareTo(loan.dueDate) >= 0) {
+            long elapsedMillis = currentTimestamp - loan.startTimestamp;
+            long elapsedSeconds = elapsedMillis / 1000;
+            
+            if (elapsedSeconds >= loan.durationSeconds) {
                 // Loan is overdue - auto deduct
                 double currentBalance = moneyManager.getCash();
                 
@@ -357,15 +359,24 @@ public class BankDataManager {
         json.put("days", d.days);
         json.put("interest", d.interest);
         json.put("totalReturn", d.totalReturn);
-        json.put("startDate", sdf.format(d.startDate));
-        json.put("maturityDate", sdf.format(d.maturityDate));
-        json.put("status", d.status);
         
-        // Calculate days remaining
-        long diff = d.maturityDate.getTime() - new Date().getTime();
-        int daysRemaining = Math.max(0, (int)(diff / (1000 * 60 * 60 * 24)));
-        json.put("daysRemaining", daysRemaining);
-        json.put("isMature", daysRemaining == 0);
+        // Calculate elapsed time
+        long currentTimestamp = System.currentTimeMillis();
+        long elapsedMillis = currentTimestamp - d.startTimestamp;
+        long elapsedSeconds = elapsedMillis / 1000;
+        long remainingSeconds = Math.max(0, d.durationSeconds - elapsedSeconds);
+        
+        // Convert timestamps to dates for display
+        Date startDate = new Date(d.startTimestamp);
+        Date maturityDate = new Date(d.startTimestamp + (d.durationSeconds * 1000));
+        
+        json.put("startDate", sdf.format(startDate));
+        json.put("maturityDate", sdf.format(maturityDate));
+        json.put("status", d.status);
+        json.put("elapsedSeconds", elapsedSeconds);
+        json.put("remainingSeconds", remainingSeconds);
+        json.put("daysRemaining", (int)(remainingSeconds / SECONDS_PER_DAY));
+        json.put("isMature", remainingSeconds == 0);
         
         return json;
     }
@@ -378,15 +389,24 @@ public class BankDataManager {
         json.put("amount", l.amount);
         json.put("interestRate", l.interestRate);
         json.put("repaymentAmount", l.repaymentAmount);
-        json.put("startDate", sdf.format(l.startDate));
-        json.put("dueDate", sdf.format(l.dueDate));
-        json.put("status", l.status);
         
-        // Calculate days remaining
-        long diff = l.dueDate.getTime() - new Date().getTime();
-        int daysRemaining = Math.max(0, (int)(diff / (1000 * 60 * 60 * 24)));
-        json.put("daysRemaining", daysRemaining);
-        json.put("isOverdue", daysRemaining == 0);
+        // Calculate elapsed time
+        long currentTimestamp = System.currentTimeMillis();
+        long elapsedMillis = currentTimestamp - l.startTimestamp;
+        long elapsedSeconds = elapsedMillis / 1000;
+        long remainingSeconds = Math.max(0, l.durationSeconds - elapsedSeconds);
+        
+        // Convert timestamps to dates for display
+        Date startDate = new Date(l.startTimestamp);
+        Date dueDate = new Date(l.startTimestamp + (l.durationSeconds * 1000));
+        
+        json.put("startDate", sdf.format(startDate));
+        json.put("dueDate", sdf.format(dueDate));
+        json.put("status", l.status);
+        json.put("elapsedSeconds", elapsedSeconds);
+        json.put("remainingSeconds", remainingSeconds);
+        json.put("daysRemaining", (int)(remainingSeconds / SECONDS_PER_DAY));
+        json.put("isOverdue", remainingSeconds == 0);
         
         return json;
     }
@@ -398,8 +418,8 @@ public class BankDataManager {
         int days;
         double interest;
         double totalReturn;
-        Date startDate;
-        Date maturityDate;
+        long startTimestamp;  // milliseconds
+        long durationSeconds; // total duration in real seconds
         String status;
     }
     
@@ -408,8 +428,8 @@ public class BankDataManager {
         double amount;
         double interestRate;
         double repaymentAmount;
-        Date startDate;
-        Date dueDate;
+        long startTimestamp;  // milliseconds
+        long durationSeconds; // total duration in real seconds
         String status;
     }
 }

@@ -13,7 +13,110 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     loadInitialData();
     startAutoRefresh();
+    setupCustomAlert();
 });
+
+// Custom Alert Functions
+function setupCustomAlert() {
+    const alertBtn = document.getElementById('alertBtn');
+    const alertOverlay = document.getElementById('customAlert');
+    
+    alertBtn.addEventListener('click', hideCustomAlert);
+    alertOverlay.addEventListener('click', (e) => {
+        if (e.target === alertOverlay) hideCustomAlert();
+    });
+    
+    // Setup confirm modal
+    const confirmOkBtn = document.getElementById('confirmOkBtn');
+    const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+    const confirmOverlay = document.getElementById('customConfirm');
+    
+    confirmCancelBtn.addEventListener('click', () => hideCustomConfirm(false));
+    confirmOverlay.addEventListener('click', (e) => {
+        if (e.target === confirmOverlay) hideCustomConfirm(false);
+    });
+}
+
+function showCustomAlert(message, title = 'Notifikasi', type = 'success') {
+    const modal = document.getElementById('customAlert');
+    const icon = document.getElementById('alertIcon');
+    const titleEl = document.getElementById('alertTitle');
+    const messageEl = document.getElementById('alertMessage');
+    const btn = document.getElementById('alertBtn');
+    
+    // Set icon and color based on type
+    const configs = {
+        success: { icon: '✓', color: '#10b981', title: title || 'Berhasil' },
+        error: { icon: '✗', color: '#ef4444', title: title || 'Gagal' },
+        warning: { icon: '⚠', color: '#f59e0b', title: title || 'Peringatan' },
+        info: { icon: 'ℹ', color: '#3b82f6', title: title || 'Informasi' }
+    };
+    
+    const config = configs[type] || configs.info;
+    
+    icon.textContent = config.icon;
+    icon.style.backgroundColor = config.color;
+    titleEl.textContent = config.title;
+    messageEl.textContent = message;
+    btn.style.backgroundColor = config.color;
+    
+    modal.classList.add('show');
+}
+
+function hideCustomAlert() {
+    const modal = document.getElementById('customAlert');
+    modal.classList.remove('show');
+}
+
+let confirmResolve = null;
+
+function showCustomConfirm(message, title = 'Konfirmasi', type = 'info') {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('customConfirm');
+        const icon = document.getElementById('confirmIcon');
+        const titleEl = document.getElementById('confirmTitle');
+        const messageEl = document.getElementById('confirmMessage');
+        const okBtn = document.getElementById('confirmOkBtn');
+        const cancelBtn = document.getElementById('confirmCancelBtn');
+        
+        // Set icon and color based on type
+        const configs = {
+            warning: { icon: '⚠', color: '#f59e0b' },
+            danger: { icon: '!', color: '#ef4444' },
+            info: { icon: '?', color: '#3b82f6' },
+            success: { icon: 'i', color: '#10b981' }
+        };
+        
+        const config = configs[type] || configs.info;
+        
+        icon.textContent = config.icon;
+        icon.style.backgroundColor = config.color;
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        okBtn.style.backgroundColor = config.color;
+        
+        // Store resolve function
+        confirmResolve = resolve;
+        
+        // Setup OK button
+        const handleOk = () => {
+            okBtn.removeEventListener('click', handleOk);
+            hideCustomConfirm(true);
+        };
+        okBtn.addEventListener('click', handleOk);
+        
+        modal.classList.add('show');
+    });
+}
+
+function hideCustomConfirm(result) {
+    const modal = document.getElementById('customConfirm');
+    modal.classList.remove('show');
+    if (confirmResolve) {
+        confirmResolve(result);
+        confirmResolve = null;
+    }
+}
 
 // Setup Event Listeners
 function setupEventListeners() {
@@ -140,12 +243,12 @@ async function createDeposit() {
     const days = parseInt(document.getElementById('depositDays').value);
     
     if (!amount || amount <= 0) {
-        alert('Masukkan jumlah deposito yang valid');
+        showCustomAlert('Masukkan jumlah deposito yang valid', 'Input Tidak Valid', 'warning');
         return;
     }
     
     if (amount > balance) {
-        alert('Saldo tidak mencukupi');
+        showCustomAlert('Saldo tidak mencukupi untuk membuat deposito', 'Saldo Kurang', 'error');
         return;
     }
     
@@ -159,7 +262,8 @@ async function createDeposit() {
         const result = await response.json();
         
         if (result.success) {
-            alert('✅ Deposito berhasil dibuat!');
+            const message = `Deposito ${formatCurrency(amount)} untuk ${days} hari berhasil dibuat!\nTotal kembali: ${formatCurrency(result.deposit.totalReturn)}`;
+            showCustomAlert(message, 'Deposito Berhasil', 'success');
             
             // Reset form
             document.getElementById('depositForm').reset();
@@ -169,17 +273,23 @@ async function createDeposit() {
             // Reload data
             await loadInitialData();
         } else {
-            alert('❌ ' + result.error);
+            showCustomAlert(result.error, 'Gagal Membuat Deposito', 'error');
         }
     } catch (error) {
         console.error('Failed to create deposit:', error);
-        alert('Terjadi kesalahan. Silakan coba lagi.');
+        showCustomAlert('Terjadi kesalahan saat membuat deposito. Silakan coba lagi.', 'Error', 'error');
     }
 }
 
 // Withdraw Deposit
 async function withdrawDeposit(depositId) {
-    if (!confirm('Tarik deposito ini?')) return;
+    const confirmed = await showCustomConfirm(
+        'Tarik deposito sekarang?\n\nJika belum jatuh tempo, Anda hanya akan menerima pokok tanpa bunga.',
+        'Tarik Deposito',
+        'info'
+    );
+    
+    if (!confirmed) return;
     
     try {
         const response = await fetch(`${API_BASE}/api/deposits/withdraw/${depositId}`, {
@@ -189,32 +299,38 @@ async function withdrawDeposit(depositId) {
         const result = await response.json();
         
         if (result.success) {
+            const type = result.isMature ? 'success' : 'warning';
+            const title = result.isMature ? 'Deposito Jatuh Tempo' : 'Penarikan Awal';
             const msg = result.isMature 
-                ? `✅ Deposito jatuh tempo! Diterima: ${formatCurrency(result.returnAmount)}`
-                : `⚠️ Penarikan awal (tanpa bunga). Diterima: ${formatCurrency(result.returnAmount)}`;
-            alert(msg);
+                ? `Deposito berhasil ditarik!\nJumlah diterima: ${formatCurrency(result.returnAmount)}\n(Pokok + Bunga)`
+                : `Deposito ditarik sebelum jatuh tempo.\nJumlah diterima: ${formatCurrency(result.returnAmount)}\n(Hanya pokok, tanpa bunga)`;
+            showCustomAlert(msg, title, type);
             
             // Reload data
             await loadInitialData();
         } else {
-            alert('❌ ' + result.error);
+            showCustomAlert(result.error, 'Gagal Menarik Deposito', 'error');
         }
     } catch (error) {
         console.error('Failed to withdraw deposit:', error);
-        alert('Terjadi kesalahan. Silakan coba lagi.');
+        showCustomAlert('Terjadi kesalahan saat menarik deposito. Silakan coba lagi.', 'Error', 'error');
     }
 }
 
 // Create Loan
 async function createLoan() {
     if (loans.length > 0) {
-        alert('Anda sudah memiliki pinjaman aktif');
+        showCustomAlert('Anda sudah memiliki pinjaman aktif. Selesaikan pinjaman saat ini terlebih dahulu.', 'Pinjaman Aktif', 'warning');
         return;
     }
     
-    if (!confirm('Ajukan pinjaman Rp 100.000 dengan pengembalian Rp 120.000 dalam 30 hari?')) {
-        return;
-    }
+    const confirmed = await showCustomConfirm(
+        'Pinjaman Rp 100.000 akan ditambahkan ke saldo Anda.\nPengembalian: Rp 120.000 dalam 30 hari (120 detik per hari game).\n\nSetelah jatuh tempo, uang akan otomatis terpotong dari saldo.',
+        'Ajukan Pinjaman?',
+        'warning'
+    );
+    
+    if (!confirmed) return;
     
     try {
         const response = await fetch(`${API_BASE}/api/loans/create`, {
@@ -224,22 +340,29 @@ async function createLoan() {
         const result = await response.json();
         
         if (result.success) {
-            alert('✅ Pinjaman disetujui! Rp 100.000 telah ditambahkan ke saldo Anda.');
+            const message = `Pinjaman Rp 100.000 berhasil disetujui!\nSaldo Anda bertambah: ${formatCurrency(result.loan.amount)}\n\nJatuh tempo: 30 hari game\nTotal bayar: ${formatCurrency(result.loan.repaymentAmount)}`;
+            showCustomAlert(message, 'Pinjaman Disetujui', 'success');
             
             // Reload data
             await loadInitialData();
         } else {
-            alert('❌ ' + result.error);
+            showCustomAlert(result.error, 'Gagal Mengajukan Pinjaman', 'error');
         }
     } catch (error) {
         console.error('Failed to create loan:', error);
-        alert('Terjadi kesalahan. Silakan coba lagi.');
+        showCustomAlert('Terjadi kesalahan saat mengajukan pinjaman. Silakan coba lagi.', 'Error', 'error');
     }
 }
 
 // Repay Loan
 async function repayLoan(loanId) {
-    if (!confirm('Bayar pinjaman sekarang?')) return;
+    const confirmed = await showCustomConfirm(
+        'Anda akan membayar pinjaman sekarang.\nJumlah yang akan terpotong: Rp 120.000\n\nLanjutkan pembayaran?',
+        'Bayar Pinjaman',
+        'warning'
+    );
+    
+    if (!confirmed) return;
     
     try {
         const response = await fetch(`${API_BASE}/api/loans/repay/${loanId}`, {
@@ -249,16 +372,17 @@ async function repayLoan(loanId) {
         const result = await response.json();
         
         if (result.success) {
-            alert(`✅ Pinjaman berhasil dibayar! Terpotong: ${formatCurrency(result.repaidAmount)}`);
+            const message = `Pinjaman berhasil dibayar!\nJumlah terpotong: ${formatCurrency(result.repaidAmount)}\nSaldo tersisa: ${formatCurrency(result.newBalance)}`;
+            showCustomAlert(message, 'Pembayaran Berhasil', 'success');
             
             // Reload data
             await loadInitialData();
         } else {
-            alert('❌ ' + result.error);
+            showCustomAlert(result.error, 'Gagal Membayar Pinjaman', 'error');
         }
     } catch (error) {
         console.error('Failed to repay loan:', error);
-        alert('Terjadi kesalahan. Silakan coba lagi.');
+        showCustomAlert('Terjadi kesalahan saat membayar pinjaman. Silakan coba lagi.', 'Error', 'error');
     }
 }
 

@@ -132,6 +132,29 @@
         </footer>
     </div>
 
+    <!-- Custom Alert Modal -->
+    <div class="modal-overlay" id="customAlert">
+        <div class="modal-content">
+            <div class="modal-icon" id="alertIcon">✓</div>
+            <h3 class="modal-title" id="alertTitle">Berhasil</h3>
+            <p class="modal-message" id="alertMessage">Operasi berhasil dilakukan</p>
+            <button class="btn btn-primary modal-btn" id="alertBtn">OK</button>
+        </div>
+    </div>
+
+    <!-- Custom Confirm Modal -->
+    <div class="modal-overlay" id="customConfirm">
+        <div class="modal-content">
+            <div class="modal-icon" id="confirmIcon">?</div>
+            <h3 class="modal-title" id="confirmTitle">Konfirmasi</h3>
+            <p class="modal-message" id="confirmMessage">Apakah Anda yakin?</p>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary modal-btn" id="confirmCancelBtn">Batal</button>
+                <button class="btn btn-primary modal-btn" id="confirmOkBtn">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
     <script src="/static/js/bank.js"></script>
 </body>
 </html>
