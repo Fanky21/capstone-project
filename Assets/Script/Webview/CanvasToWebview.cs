@@ -29,7 +29,7 @@ public class CanvasToWebview : MonoBehaviour
     [SerializeField] private float transformDelay = 3f;
     
     [Tooltip("Aktifkan transformasi otomatis")]
-    [SerializeField] private bool autoTransform = true;
+    [SerializeField] private bool autoTransform = false;
     
     [Header("Interactive Elements")]
     [Tooltip("Panel container untuk webview UI")]
@@ -71,10 +71,16 @@ public class CanvasToWebview : MonoBehaviour
         InitializeComponents();
         SetupInteractiveElements();
         
-        if (autoTransform)
+        // AUTO-TRANSFORM DISABLED - Webview will only open via button press
+        // Uncomment below to re-enable auto transform feature
+        /*
+        if (autoTransform && !isTransformed)
         {
+            Debug.Log($"Auto-transform enabled with {transformDelay}s delay");
             StartCoroutine(AutoTransformCoroutine());
         }
+        */
+        Debug.Log("Auto-transform disabled. Webview will only open via button press.");
     }
 
     /// <summary>
