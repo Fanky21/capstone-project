@@ -50,6 +50,14 @@ public class Player : MonoBehaviour
         if (initFlask == null)
             initFlask = FindFirstObjectByType<InitFlask>();
 
+        // Subscribe to money update event
+        if (initFlask != null)
+        {
+            initFlask.OnMoneyUpdated += OnMoneyChanged;
+            // Get initial money from server
+            initFlask.getFlaskMoney();
+        }
+
         healthSlider.maxValue = maxHealth;
         healthSlider.value = currentHealth;
 
@@ -59,6 +67,20 @@ public class Player : MonoBehaviour
         UpdateUangUI();
 
         StartCoroutine(DecreaseStatsOverTime());
+    }
+
+    void OnDestroy()
+    {
+        // Unsubscribe from event
+        if (initFlask != null)
+        {
+            initFlask.OnMoneyUpdated -= OnMoneyChanged;
+        }
+    }
+
+    private void OnMoneyChanged(int newMoney)
+    {
+        UpdateUangUI();
     }
 
     private IEnumerator DecreaseStatsOverTime()

@@ -18,7 +18,7 @@ public class InitFlask : MonoBehaviour
 
     private System.Collections.IEnumerator GetFlaskMoneyCoroutine()
     {
-        using (UnityEngine.Networking.UnityWebRequest request = UnityEngine.Networking.UnityWebRequest.Get("http://localhost:5000/api/money/get"))
+        using (UnityEngine.Networking.UnityWebRequest request = UnityEngine.Networking.UnityWebRequest.Get("http://localhost:5000/api/unity/money/check"))
         {
             yield return request.SendWebRequest();
             if (request.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
@@ -55,7 +55,7 @@ public class InitFlask : MonoBehaviour
     private System.Collections.IEnumerator AddFlaskMoneyCoroutine(int amount)
     {
         string jsonData = JsonUtility.ToJson(new MoneyData { amount = amount });
-        using (UnityEngine.Networking.UnityWebRequest request = new UnityEngine.Networking.UnityWebRequest("http://localhost:5000/api/money/add", "POST"))
+        using (UnityEngine.Networking.UnityWebRequest request = new UnityEngine.Networking.UnityWebRequest("http://localhost:5000/api/unity/money/add", "POST"))
         {
             byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
             request.uploadHandler = new UnityEngine.Networking.UploadHandlerRaw(bodyRaw);
@@ -65,6 +65,8 @@ public class InitFlask : MonoBehaviour
             if (request.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
             {
                 Debug.Log("Add Money: " + request.downloadHandler.text);
+                // Refresh money to update currentMoney and trigger OnMoneyUpdated
+                getFlaskMoney();
             }
             else
             {
@@ -81,7 +83,7 @@ public class InitFlask : MonoBehaviour
     private System.Collections.IEnumerator RemoveFlaskMoneyCoroutine(int amount)
     {
         string jsonData = JsonUtility.ToJson(new MoneyData { amount = amount });
-        using (UnityEngine.Networking.UnityWebRequest request = new UnityEngine.Networking.UnityWebRequest("http://localhost:5000/api/money/subtract", "POST"))
+        using (UnityEngine.Networking.UnityWebRequest request = new UnityEngine.Networking.UnityWebRequest("http://localhost:5000/api/unity/money/subtract", "POST"))
         {
             byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
             request.uploadHandler = new UnityEngine.Networking.UploadHandlerRaw(bodyRaw);
@@ -91,6 +93,8 @@ public class InitFlask : MonoBehaviour
             if (request.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
             {
                 Debug.Log("Remove Money: " + request.downloadHandler.text);
+                // Refresh money to update currentMoney and trigger OnMoneyUpdated
+                getFlaskMoney();
             }
             else
             {

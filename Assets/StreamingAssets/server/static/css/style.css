@@ -922,6 +922,107 @@ body {
     }
 }
 
+/* Landscape mode for mobile - Modal and Alert fixes */
+@media (max-height: 500px) and (orientation: landscape) {
+    /* Trading Modal - compact for landscape */
+    .modal {
+        padding: 10px;
+        overflow-y: auto;
+    }
+    
+    .modal-content {
+        width: 80%;
+        max-width: 400px;
+        max-height: 90vh;
+        overflow-y: auto;
+        margin: auto;
+    }
+    
+    .modal-header {
+        padding: 10px 15px;
+    }
+    
+    .modal-header h3 {
+        font-size: 16px;
+    }
+    
+    .close-btn {
+        font-size: 24px;
+        padding: 0 5px;
+    }
+    
+    .modal-body {
+        padding: 15px;
+    }
+    
+    .modal-body p {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+    
+    .input-group {
+        margin-bottom: 10px;
+    }
+    
+    .input-group label {
+        font-size: 12px;
+        margin-bottom: 5px;
+    }
+    
+    .input-group input {
+        padding: 8px;
+        font-size: 14px;
+    }
+    
+    .total-cost {
+        font-size: 14px;
+        padding: 10px;
+    }
+    
+    .modal-footer {
+        padding: 10px 15px;
+        gap: 10px;
+    }
+    
+    .modal-btn {
+        padding: 10px;
+        font-size: 12px;
+    }
+    
+    /* Custom Alert - compact for landscape */
+    .custom-alert {
+        padding: 10px;
+        overflow-y: auto;
+    }
+    
+    .alert-content {
+        padding: 20px;
+        min-width: 280px;
+        max-width: 350px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .alert-icon {
+        margin-bottom: 10px;
+    }
+    
+    .alert-icon svg {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .alert-message {
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+    
+    .alert-btn {
+        padding: 8px 25px;
+        font-size: 12px;
+    }
+}
+
 /* News Page Styles */
 .news-page {
     padding: 30px;
